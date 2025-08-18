@@ -1,1 +1,5 @@
 assessment_notes.txt
+venv/
+__pycache__/
+.env
+.flaskenv
