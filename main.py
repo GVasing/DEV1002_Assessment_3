@@ -8,14 +8,20 @@ from dotenv import load_dotenv
 # Created Module Imports
 from init import db
 
+# Explain what this does
 load_dotenv()
 
+# Explain the purpose of this function
 def create_app():
+
+    # Explain the purpose of this variable
     app = Flask(__name__)
 
+    # Explain the purpose of this statement
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URI")
 
     # Initialise SQL Database
     db.init_app(app)
 
+    # App is returned
     return app
