@@ -12,4 +12,4 @@ class Location(db.Model):
 
     # Non-Key attributes
     city_name = db.Column(db.String(100), nullable=False)
-    country_name = db.Column(db.String(100), nullable=False, unique=True)
+    country_name = db.Column(db.String(100), nullable=False)
