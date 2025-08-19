@@ -4,6 +4,7 @@ import os
 # Installed imports
 from flask import Flask
 from dotenv import load_dotenv
+from controllers.cli_controller import db_commands
 
 # Created Module Imports
 from init import db
@@ -22,6 +23,9 @@ def create_app():
 
     # Initialise SQL Database
     db.init_app(app)
+
+    # Register Blueprint
+    app.register_blueprint(db_commands)
 
     # App is returned
     return app
