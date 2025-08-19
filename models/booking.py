@@ -11,9 +11,9 @@ class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # Non-Key attributes
-    cabin_class = db.Column(db.String, nullable=False)
+    cabin_class = db.Column(db.String(100), nullable=False)
     checked_baggage = db.Column(db.Boolean, nullable=False)
     baggage_amount = db.Column(db.Float)
     seat_selected = db.Column(db.Boolean, nullable=False)
-    meal_ordered = db.Column(db.String)
+    meal_ordered = db.Column(db.String(100))
     ticket_price = db.Column(db.Float)

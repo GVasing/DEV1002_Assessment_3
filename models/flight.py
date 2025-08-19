@@ -11,9 +11,9 @@ class Flight(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # Non-Key attributes
-    departure_point = db.Column(db.String, nullable=False)
-    destination = db.Column(db.String, nullable=False)
-    flight_code = db.Column(db.String, nullable=False, unique=True)
+    departure_point = db.Column(db.String(100), nullable=False)
+    destination = db.Column(db.String(100), nullable=False)
+    flight_code = db.Column(db.String(100), nullable=False, unique=True)
     departure_time = db.Column(db.Time, nullable=False)
     arrival_time = db.Column(db.Time, nullable=False)
     departure_date = db.Column(db.Date, nullable=False)

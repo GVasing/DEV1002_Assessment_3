@@ -11,8 +11,8 @@ class Plane(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # Non-Key attributes
-    manufacturer = db.Column(db.String, nullable=False)
-    model = db.Column(db.String, nullable=False, unique=True)
+    manufacturer = db.Column(db.String(100), nullable=False)
+    model = db.Column(db.String(100), nullable=False, unique=True)
     range = db.Column(db.Float)
     passenger_capacity = db.Column(db.Integer, nullable=False)
     fuel_capacity = db.Column(db.Integer, nullable=False)

@@ -11,5 +11,5 @@ class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # Non-Key attributes
-    city_name = db.Column(db.String, nullable=False)
-    country_name = db.Column(db.String, nullable=False, unique=True)
+    city_name = db.Column(db.String(100), nullable=False)
+    country_name = db.Column(db.String(100), nullable=False, unique=True)
