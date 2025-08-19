@@ -1,0 +1,11 @@
+# Explain why this is imported
+from init import db
+
+# Explain the purpose of this class
+class Location(db.Model):
+    __tablename__ = "locations"
+
+    # Attributes of 'Location' entity
+    id = db.Column(db.Integer, primary_key=True)
+    city_name = db.Column(db.String, nullable=False)
+    country_name = db.Column(db.String, nullable=False, unique=True)
