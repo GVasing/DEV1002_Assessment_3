@@ -6,7 +6,11 @@ class Flight(db.Model):
     __tablename__ = "flights"
 
     # Attributes of 'Flight' entity
+
+    # Primary Key attribute
     id = db.Column(db.Integer, primary_key=True)
+
+    # Non-Key attributes
     departure_point = db.Column(db.String, nullable=False)
     destination = db.Column(db.String, nullable=False)
     flight_code = db.Column(db.String, nullable=False, unique=True)

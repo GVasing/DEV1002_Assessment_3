@@ -6,7 +6,11 @@ class Airline(db.Model):
     __tablename__ = "airlines"
 
     # Attributes of 'Airline' entity
+
+    # Primary Key attribute
     id = db.Column(db.Integer, primary_key=True)
+
+    # Non-Key attributes
     airline_name = db.Column(db.String, nullable=False, unique=True)
     origin = db.Column(db.String, nullable=False)
     fleet_size = db.Column(db.Integer)

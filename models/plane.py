@@ -6,7 +6,11 @@ class Plane(db.Model):
     __tablename__ = "planes"
 
     # Attributes of 'Plane' entity
+
+    # Primary Key attribute
     id = db.Column(db.Integer, primary_key=True)
+
+    # Non-Key attributes
     manufacturer = db.Column(db.String, nullable=False)
     model = db.Column(db.String, nullable=False, unique=True)
     range = db.Column(db.Float)

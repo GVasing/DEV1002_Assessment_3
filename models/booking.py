@@ -6,7 +6,11 @@ class Booking(db.Model):
     __tablename__ = "bookings"
 
     # Attributes of 'Booking' entity
+
+    # Primary Key attribute
     id = db.Column(db.Integer, primary_key=True)
+
+    # Non-Key attributes
     cabin_class = db.Column(db.String, nullable=False)
     checked_baggage = db.Column(db.Boolean, nullable=False)
     baggage_amount = db.Column(db.Float)

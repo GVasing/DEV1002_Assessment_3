@@ -6,6 +6,10 @@ class Location(db.Model):
     __tablename__ = "locations"
 
     # Attributes of 'Location' entity
+
+    # Primary Key attribute
     id = db.Column(db.Integer, primary_key=True)
+
+    # Non-Key attributes
     city_name = db.Column(db.String, nullable=False)
     country_name = db.Column(db.String, nullable=False, unique=True)
