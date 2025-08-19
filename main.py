@@ -4,10 +4,11 @@ import os
 # Installed imports
 from flask import Flask
 from dotenv import load_dotenv
-from controllers.cli_controller import db_commands
 
 # Created Module Imports
 from init import db
+from controllers.cli_controller import db_commands
+from controllers.location_controller import location_bp
 
 # Explain what this does
 load_dotenv()
@@ -26,6 +27,7 @@ def create_app():
 
     # Register Blueprint
     app.register_blueprint(db_commands)
+    app.register_blueprint(location_bp)
 
     # App is returned
     return app
