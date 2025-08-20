@@ -1,3 +1,6 @@
+# Built-in imports
+from datetime import time, date
+
 # Installed imports
 from flask import Blueprint
 
@@ -8,6 +11,7 @@ from models.airline import Airline
 from models.plane import Plane
 from models.staff import Staff
 from models.passenger import Passenger
+from models.flight import Flight
 
 # Define/Create a blueprint of 'app'
 db_commands = Blueprint("db", __name__)
@@ -124,6 +128,34 @@ def seed_tables():
 
     # Add to session
     db.session.add_all(passengers)
+
+    # Create instance(s) of Flight
+
+    flights = [
+        Flight(
+            departure_point="Melbourne",
+            destination="Sydney",
+            flight_code="QF446",
+            departure_time= time(13, 30),
+            arrival_time= time(14, 55),
+            departure_date= date(2025, 8, 20),  # date(year, month, day)
+            flight_duration= 95,
+            airline_id=airlines[0].id
+        ),
+        Flight(
+            departure_point="Sydney",
+            destination="Brisbane",
+            flight_code="QF526",
+            departure_time= time(13, 55),
+            arrival_time= time(15, 25),
+            departure_date= date(2025, 8, 20),
+            flight_duration= 93,
+            airline_id=airlines[0].id
+        )
+    ]
+
+    # Add to session
+    db.session.add_all(flights)
 
     # Commit session
     db.session.commit()

@@ -18,3 +18,9 @@ class Flight(db.Model):
     arrival_time = db.Column(db.Time, nullable=False)
     departure_date = db.Column(db.Date, nullable=False)
     flight_duration = db.Column(db.Float, nullable=False)
+
+    # Foreign Key attribute
+    airline_id = db.Column(db.Integer, db.ForeignKey("airlines.id"))
+
+    # Define relationship
+    airline = db.relationship("Airline", back_populates="flights")

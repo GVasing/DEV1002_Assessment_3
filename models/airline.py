@@ -15,3 +15,6 @@ class Airline(db.Model):
     origin = db.Column(db.String(100), nullable=False)
     fleet_size = db.Column(db.Integer)
     number_of_destinations = db.Column(db.Integer)
+
+    # Define Relationship
+    flights = db.relationship("Flight", back_populates="airline")
