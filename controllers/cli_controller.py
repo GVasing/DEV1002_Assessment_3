@@ -6,6 +6,7 @@ from init import db
 from models.location import Location
 from models.airline import Airline
 from models.plane import Plane
+from models.staff import Staff
 
 # Define/Create a blueprint of 'app'
 db_commands = Blueprint("db", __name__)
@@ -75,6 +76,31 @@ def seed_tables():
 
     # Add to session
     db.session.add_all(planes)
+
+        # Create an instance(s) of Staff
+    staff = [
+        Staff(
+            name="Jeanie Coleman",
+            age= 31,
+            gender= "Female",
+            employment= "Full-Time",
+            position= "Passenger Service Agent",
+            salary= 70000,
+            years_worked= 6 
+        ),
+        Staff(
+            name="Felix Morrison",
+            age= 25,
+            gender= "Male",
+            employment= "Part-Time",
+            position= "Baggage Handler",
+            salary= 38000,
+            years_worked= 3
+        )
+    ]
+
+    # Add to session
+    db.session.add_all(staff)
 
     # Commit session
     db.session.commit()
