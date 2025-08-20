@@ -5,6 +5,7 @@ from flask import Blueprint
 from init import db
 from models.location import Location
 from models.airline import Airline
+from models.plane import Plane
 
 # Define/Create a blueprint of 'app'
 db_commands = Blueprint("db", __name__)
@@ -53,7 +54,28 @@ def seed_tables():
 
     # Add to session
     db.session.add_all(airlines)
-    
+
+    # Create an instance(s) of Plane
+    planes = [
+        Plane(
+            manufacturer="Boeing",
+            model="747-400",
+            range= 13450,
+            passenger_capacity= 524,
+            fuel_capacity= 216850
+        ),
+        Plane(
+            manufacturer="Airbus",
+            model="A330-300",
+            range= 11300,
+            passenger_capacity= 290,
+            fuel_capacity= 139090
+        )
+    ]
+
+    # Add to session
+    db.session.add_all(planes)
+
     # Commit session
     db.session.commit()
     print("Tables seeded.")
