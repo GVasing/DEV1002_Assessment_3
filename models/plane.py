@@ -16,3 +16,6 @@ class Plane(db.Model):
     range = db.Column(db.Float)
     passenger_capacity = db.Column(db.Integer, nullable=False)
     fuel_capacity = db.Column(db.Integer, nullable=False)
+
+    # Define Relationship
+    passengers = db.relationship("Passenger", back_populates="plane")

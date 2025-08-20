@@ -49,6 +49,10 @@ class PassengerSchema(SQLAlchemyAutoSchema):
         model = Passenger
         load_instance = True
         include_relationships = True
+        ordered = True
+        # fields = ("id", )
+    
+    plane = fields.Nested("PlaneSchema")
 
 class PlaneSchema(SQLAlchemyAutoSchema):
     class Meta:

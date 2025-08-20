@@ -7,6 +7,7 @@ from models.location import Location
 from models.airline import Airline
 from models.plane import Plane
 from models.staff import Staff
+from models.passenger import Passenger
 
 # Define/Create a blueprint of 'app'
 db_commands = Blueprint("db", __name__)
@@ -77,7 +78,7 @@ def seed_tables():
     # Add to session
     db.session.add_all(planes)
 
-        # Create an instance(s) of Staff
+    # Create an instance(s) of Staff
     staff = [
         Staff(
             name="Jeanie Coleman",
@@ -101,6 +102,28 @@ def seed_tables():
 
     # Add to session
     db.session.add_all(staff)
+    
+    # Commit session here prior to creation of dependenent tables to generate foreign keys for them.
+    db.session.commit()
+
+    # Create instance(s) of Passenger
+    passengers = [
+        Passenger(
+            name="John Smith",
+            age= 55,
+            gender="Male",
+            plane_id=planes[0].id
+        ),
+        Passenger(
+            name="Jane Doe",
+            age= 46,
+            gender="Female",
+            plane_id=planes[1].id
+        )
+    ]
+
+    # Add to session
+    db.session.add_all(passengers)
 
     # Commit session
     db.session.commit()
