@@ -5,66 +5,68 @@ from psycopg2 import errorcodes
 
 # Created Module Imports
 from init import db
-from models.plane import Plane
-from schemas.schemas import plane_schema, planes_schema
+from models.flight import Flight
+from schemas.schemas import flight_schema, flights_schema
 
-# Define Blueprint for plane
-plane_bp = Blueprint("plane", __name__, url_prefix="/planes")
+# Define Blueprint for flight
+flight_bp = Blueprint("flight", __name__, url_prefix="/flights")
 
 # Routes
 # GET
-@plane_bp.route("/")
-def get_planes():
+@flight_bp.route("/")
+def get_flights():
     # Define GET statement
-    stmt = db.select(Plane)
+    stmt = db.select(Flight)
     # Execute it
-    planes_list = db.session.scalars(stmt) # Python Object
+    flights_list = db.session.scalars(stmt) # Python Object
     # Serialise
-    data = planes_schema.dump(planes_list) # JSON Object
+    data = flights_schema.dump(flights_list) # JSON Object
     # Error Handling and Return
     if data:
         return jsonify(data)
     else:
-        return {"message": "No plane records found"}, 404
+        return {"message": "No flight records found"}, 404
     
 # GET /id
-@plane_bp.route("/<int:plane_id>")
-def get_a_plane(plane_id):
+@flight_bp.route("/<int:flight_id>")
+def get_a_flight(flight_id):
     # Define GET statment
-    stmt = db.select(Plane).where(Plane.id == plane_id)
+    stmt = db.select(Flight).where(Flight.id == flight_id)
 
     # Execute it
-    plane = db.session.scalar(stmt)
+    flight = db.session.scalar(stmt)
 
     # Error Handling
-    if plane:
+    if flight:
         # Serialise
-        data = plane_schema.dump(plane)
+        data = flight_schema.dump(flight)
         # Return data
         return jsonify(data)
     else:
-        return {"message":f"Plane with id {plane_id} not found."}, 404
+        return {"message":f"Flight with id {flight_id} not found."}, 404
     
 # POST /
-@plane_bp.route("/", methods=["POST"])
-def create_a_plane():
+@flight_bp.route("/", methods=["POST"])
+def create_a_flight():
     try:
         # GET info from the request body
         body_data = request.get_json()
-        # Create a Plane Object from Plane class/model with body response data
-        new_plane = Plane(
-            manufacturer=body_data.get("manufacturer"),
-            model=body_data.get("model"),
-            range=body_data.get("range"),
-            passenger_capacity=body_data.get("passenger_capacity"),
-            fuel_capacity=body_data.get("fuel_capacity")
+        # Create a Flight Object from Flight class/model with body response data
+        new_flight = Flight(
+            departure_point=body_data.get("departure_point"),
+            destination=body_data.get("destination"),
+            flight_code=body_data.get("flight_code"),
+            departure_time=body_data.get("departure_time"),
+            arrival_time=body_data.get("arrival_time"),
+            departure_date=body_data.get("departure_date"),
+            flight_duration=body_data.get("flight_duration")
         )
-        # Add new plane data to session
-        db.session.add(new_plane)
+        # Add new flight data to session
+        db.session.add(new_flight)
         # Commit the session
         db.session.commit()
         # Return
-        return jsonify(plane_schema.dump(new_plane)), 201
+        return jsonify(flight_schema.dump(new_flight)), 201
     except IntegrityError as err:
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {"message":f"Required field {err.orig.diag.column_name} cannot be null"}, 400
@@ -74,45 +76,47 @@ def create_a_plane():
             return {"message": "Unexpected Error Occured"}, 400
         
 # PUT/PATCH /id
-@plane_bp.route("/<int:plane_id>", methods=["PUT", "PATCH"])
-def update_plane(plane_id):
+@flight_bp.route("/<int:flight_id>", methods=["PUT", "PATCH"])
+def update_flight(flight_id):
     # Define GET Statement
-    stmt = db.select(Plane).where(Plane.id == plane_id)
+    stmt = db.select(Flight).where(Flight.id == flight_id)
 
     # Execute statement
-    plane = db.session.scalar(stmt)
+    flight = db.session.scalar(stmt)
 
     # If/Elif/Else Conditions
-    if plane:
-        # Retrieve 'plane' data
+    if flight:
+        # Retrieve 'flight' data
         body_data = request.get_json()
         # Specify changes
-        plane.manufacturer = body_data.get("manufacturer") or plane.manufacturer
-        plane.model = body_data.get("model") or plane.model
-        plane.range = body_data.get("range") or plane.range
-        plane.passenger_capacity = body_data.get("passenger_capacity") or plane.passenger_capacity
-        plane.fuel_capacity = body_data.get("fuel_capacity") or plane.fuel_capacity
+        flight.departure_point = body_data.get("departure_point") or flight.departure_point
+        flight.destination = body_data.get("destination") or flight.destination
+        flight.flight_code = body_data.get("flight_code") or flight.flight_code
+        flight.departure_time = body_data.get("departure_time") or flight.departure_time
+        flight.arrival_time = body_data.get("arrival_time") or flight.arrival_time
+        flight.departure_date = body_data.get("departure_date") or flight.departure_date
+        flight.flight_duration = body_data.get("flight_duration") or flight.flight_duration
         # Commit changes
         db.session.commit()
         # Return data
-        return jsonify(plane_schema.dump(plane))
+        return jsonify(flight_schema.dump(flight))
     else:
-        return {"message": f"Plane with id {plane_id} does not exist/cannot be found."}, 404
+        return {"message": f"Flight with id {flight_id} does not exist/cannot be found."}, 404
 
 # DELETE /id
-@plane_bp.route("/<int:plane_id>", methods=["DELETE"])
-def delete_a_plane(plane_id):
-        # Find the plane with the plane_id
-    stmt = db.select(Plane).where(Plane.id == plane_id)
-    plane = db.session.scalar(stmt)
+@flight_bp.route("/<int:flight_id>", methods=["DELETE"])
+def delete_a_flight(flight_id):
+        # Find the flight with the flight_id
+    stmt = db.select(Flight).where(Flight.id == flight_id)
+    flight = db.session.scalar(stmt)
     # if exists
-    if plane:
-        # delete the plane entry
-        db.session.delete(plane)
+    if flight:
+        # delete the flight entry
+        db.session.delete(flight)
         db.session.commit()
 
-        return {"message": f"Plane '{plane.manufacturer}: {plane.model}' has been removed successfully."}, 200
+        return {"message": f"Flight '{flight.flight_code}' has been removed successfully."}, 200
     # else:
     else:
         # return an acknowledgement message
-        return {"message": f"Plane with id '{plane_id}' does not exist"}, 404
+        return {"message": f"Flight with id '{flight_id}' does not exist"}, 404
