@@ -50,15 +50,18 @@ class PassengerSchema(SQLAlchemyAutoSchema):
         load_instance = True
         include_relationships = True
         ordered = True
-        # fields = ("id", )
+        fields = ("id", "name", "age", "gender", "plane")
     
-    plane = fields.Nested("PlaneSchema")
+    # plane = fields.Nested("PlaneSchema", only=("id", "manufacturer", "model"))
 
 class PlaneSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Plane
         load_instance = True
         include_relationships = True
+        fields = ("id", "manufacturer", "model", "range", "passenger_capacity", "fuel_capacity")
+
+    manufacturer = auto_field(validate=OneOf(["Boeing", "Airbus", "Embraer", "Bombardier", "Cessna", "Pilatus", "ATR", "De Havilland Canada"], error="Manufacturer not within the available options"))
 
 class StaffSchema(SQLAlchemyAutoSchema):
     class Meta:
