@@ -13,6 +13,7 @@ from controllers.airline_controller import airline_bp
 from controllers.plane_controller import plane_bp
 from controllers.staff_controller import staff_bp
 from controllers.passenger_controller import passenger_bp
+from controllers.flight_controller import flight_bp
 
 # Explain what this does
 load_dotenv()
@@ -39,6 +40,7 @@ def create_app():
     app.register_blueprint(plane_bp)
     app.register_blueprint(staff_bp)
     app.register_blueprint(passenger_bp)
+    app.register_blueprint(flight_bp)
 
     # App is returned
     return app

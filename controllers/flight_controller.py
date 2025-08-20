@@ -59,7 +59,8 @@ def create_a_flight():
             departure_time=body_data.get("departure_time"),
             arrival_time=body_data.get("arrival_time"),
             departure_date=body_data.get("departure_date"),
-            flight_duration=body_data.get("flight_duration")
+            flight_duration=body_data.get("flight_duration"),
+            airline_id=body_data.get("airline_id")
         )
         # Add new flight data to session
         db.session.add(new_flight)
@@ -96,6 +97,7 @@ def update_flight(flight_id):
         flight.arrival_time = body_data.get("arrival_time") or flight.arrival_time
         flight.departure_date = body_data.get("departure_date") or flight.departure_date
         flight.flight_duration = body_data.get("flight_duration") or flight.flight_duration
+        flight.airline_id = body_data.get("airline_id") or flight.airline_id
         # Commit changes
         db.session.commit()
         # Return data

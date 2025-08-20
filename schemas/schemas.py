@@ -19,24 +19,33 @@ class AirlineSchema(SQLAlchemyAutoSchema):
         model = Airline
         load_instance = True
         include_relationships = True
+        fields = ("id", "airline_name", "origin", "fleet_size", "number_of_destinations")
+        ordered = True
 
 class AirportSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Airport
         load_instance = True
+        include_fk = True
         include_relationships = True
 
 class BookingSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Booking
         load_instance = True
+        include_fk = True
         include_relationships = True
 
 class FlightSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Flight
         load_instance = True
+        include_fk = True
         include_relationships = True
+        ordered = True
+        fields = ("id", "departure_point", "destination", "flight_code", "departure_time", "arrival_time", "departure_date", "flight_duration", "airline_id", "airline")
+
+    airline = fields.Nested("AirlineSchema", only=("airline_name",))
 
 class LocationSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -48,6 +57,7 @@ class PassengerSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Passenger
         load_instance = True
+        include_fk = True
         include_relationships = True
         ordered = True
         fields = ("id", "name", "age", "gender", "plane")
@@ -59,6 +69,7 @@ class PlaneSchema(SQLAlchemyAutoSchema):
         model = Plane
         load_instance = True
         include_relationships = True
+        ordered = True
         fields = ("id", "manufacturer", "model", "range", "passenger_capacity", "fuel_capacity")
 
     manufacturer = auto_field(validate=OneOf(["Boeing", "Airbus", "Embraer", "Bombardier", "Cessna", "Pilatus", "ATR", "De Havilland Canada"], error="Manufacturer not within the available options"))
