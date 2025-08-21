@@ -15,4 +15,4 @@ class Location(db.Model):
     country_name = db.Column(db.String(100), nullable=False)
 
     # Define Relationship
-    airports = db.relationship("Airport", back_populates="location")
+    airports = db.relationship("Airport", back_populates="location", cascade = "all, delete")

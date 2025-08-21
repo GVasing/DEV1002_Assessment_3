@@ -14,6 +14,7 @@ from models.staff import Staff
 from models.passenger import Passenger
 from models.flight import Flight
 from models.airport import Airport
+from models.booking import Booking
 
 # Define/Create a blueprint of 'app'
 db_commands = Blueprint("db", __name__)
@@ -186,6 +187,38 @@ def seed_tables():
 
     # Add to session
     db.session.add_all(staff)
+
+    # Commit here to generate multiple forgein keys for junction table (Booking)
+    db.session.commit()
+
+    # Create instance(s) of Booking
+    bookings = [
+        Booking(
+            cabin_class="Economy",
+            checked_baggage= False,
+            baggage_amount= 0,
+            seat_selected= False,
+            meal_ordered=None,
+            ticket_price= 372,
+            airport_id=airports[0].id,
+            flight_id=flights[0].id,
+            passenger_id=passengers[0].id,
+        ),
+        Booking(
+            cabin_class="Economy",
+            checked_baggage= True,
+            baggage_amount= 25.5,
+            seat_selected= False,
+            meal_ordered="Chicken w/ Rice",
+            ticket_price= 400.50,
+            airport_id=airports[1].id,
+            flight_id=flights[1].id,
+            passenger_id=passengers[1].id,
+        )
+    ]
+
+    # Add to session
+    db.session.add_all(bookings)
 
     # Commit session
     db.session.commit()

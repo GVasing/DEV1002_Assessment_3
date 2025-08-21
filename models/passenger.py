@@ -20,3 +20,4 @@ class Passenger(db.Model):
 
     # Define relationship
     plane = db.relationship("Plane", back_populates="passengers")
+    bookings = db.relationship("Booking", back_populates="passenger")

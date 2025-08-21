@@ -17,3 +17,13 @@ class Booking(db.Model):
     seat_selected = db.Column(db.Boolean, nullable=False)
     meal_ordered = db.Column(db.String(100))
     ticket_price = db.Column(db.Float)
+
+    # Foreign Key attributes
+    airport_id = db.Column(db.Integer, db.ForeignKey("airports.id", ondelete="CASCADE"), nullable=False)
+    flight_id = db.Column(db.Integer, db.ForeignKey("flights.id", ondelete="CASCADE"), nullable=False)
+    passenger_id = db.Column(db.Integer, db.ForeignKey("passengers.id", ondelete="CASCADE"), nullable=False)
+
+    # Define relationships
+    airport = db.relationship("Airport", back_populates="bookings")
+    flight = db.relationship("Flight", back_populates="bookings")
+    passenger = db.relationship("Passenger", back_populates="bookings")

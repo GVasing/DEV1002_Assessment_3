@@ -48,6 +48,12 @@ class BookingSchema(SQLAlchemyAutoSchema):
         load_instance = True
         include_fk = True
         include_relationships = True
+        ordered = True
+        fields = ("id", "cabin_class", "checked_baggage", "baggage_amount", "seat_selected", "meal_ordered", "ticket_price", "airport_id", "flight_id", "passenger_id", "airport", "flight", "passenger")
+
+    airport = fields.Nested("AirportSchema", only=("name", "location"))
+    flight = fields.Nested("FlightSchema", only=("destination",))
+    passenger = fields.Nested("PassengerSchema", only=("name", ))
 
 class FlightSchema(SQLAlchemyAutoSchema):
     class Meta:

@@ -17,4 +17,4 @@ class Airline(db.Model):
     number_of_destinations = db.Column(db.Integer)
 
     # Define Relationship
-    flights = db.relationship("Flight", back_populates="airline")
+    flights = db.relationship("Flight", back_populates="airline", cascade = "all, delete")
