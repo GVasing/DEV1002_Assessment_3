@@ -16,3 +16,10 @@ class Airport(db.Model):
     international_terminal_amount = db.Column(db.Integer)
     domestic_terminal_amount = db.Column(db.Integer)
     number_of_runways = db.Column(db.Integer)
+
+    # Foreign Key attribute
+    location_id = db.Column(db.Integer, db.ForeignKey("locations.id"), nullable=False)
+
+    # Define relationship
+    location = db.relationship("Location", back_populates="airports")
+    staff = db.relationship("Staff", back_populates="airports")

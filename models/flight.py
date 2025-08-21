@@ -5,9 +5,6 @@ from init import db
 class Flight(db.Model):
     __tablename__ = "flights"
 
-    # Explain what this does
-    __table_args__ = (db.UniqueConstraint("airline_id", name="unique_airline"),)
-
     # Attributes of 'Flight' entity
 
     # Primary Key attribute
@@ -23,7 +20,7 @@ class Flight(db.Model):
     flight_duration = db.Column(db.Float, nullable=False)
 
     # Foreign Key attribute
-    airline_id = db.Column(db.Integer, db.ForeignKey("airlines.id"), nullable=False)
+    airline_id = db.Column(db.Integer, db.ForeignKey("airlines.id", ondelete="CASCADE"), nullable=False)
 
     # Define relationship
     airline = db.relationship("Airline", back_populates="flights")

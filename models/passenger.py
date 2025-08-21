@@ -16,7 +16,7 @@ class Passenger(db.Model):
     gender = db.Column(db.String(100), nullable=False)
 
     # Foreign Key attribute
-    plane_id = db.Column(db.Integer, db.ForeignKey("planes.id"))
+    plane_id = db.Column(db.Integer, db.ForeignKey("planes.id"), nullable=False)
 
     # Define relationship
     plane = db.relationship("Plane", back_populates="passengers")

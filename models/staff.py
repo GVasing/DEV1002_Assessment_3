@@ -18,3 +18,9 @@ class Staff(db.Model):
     position = db.Column(db.String(100), nullable=False)
     salary = db.Column(db.Float)
     years_worked = db.Column(db.Float)
+
+    # Foreign Key attribute
+    airport_id = db.Column(db.Integer, db.ForeignKey("airports.id"), nullable=False)
+
+    # Define Relationship
+    airports = db.relationship("Airport", back_populates="staff")

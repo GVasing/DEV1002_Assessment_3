@@ -3,6 +3,7 @@ from datetime import time, date
 
 # Installed imports
 from flask import Blueprint
+from sqlalchemy import text
 
 # Created Module Imports
 from init import db
@@ -12,6 +13,7 @@ from models.plane import Plane
 from models.staff import Staff
 from models.passenger import Passenger
 from models.flight import Flight
+from models.airport import Airport
 
 # Define/Create a blueprint of 'app'
 db_commands = Blueprint("db", __name__)
@@ -81,31 +83,6 @@ def seed_tables():
 
     # Add to session
     db.session.add_all(planes)
-
-    # Create an instance(s) of Staff
-    staff = [
-        Staff(
-            name="Jeanie Coleman",
-            age= 31,
-            gender= "Female",
-            employment= "Full-Time",
-            position= "Passenger Service Agent",
-            salary= 70000,
-            years_worked= 6 
-        ),
-        Staff(
-            name="Felix Morrison",
-            age= 25,
-            gender= "Male",
-            employment= "Part-Time",
-            position= "Baggage Handler",
-            salary= 38000,
-            years_worked= 3
-        )
-    ]
-
-    # Add to session
-    db.session.add_all(staff)
     
     # Commit session here prior to creation of dependenent tables to generate foreign keys for them.
     db.session.commit()
@@ -130,7 +107,6 @@ def seed_tables():
     db.session.add_all(passengers)
 
     # Create instance(s) of Flight
-
     flights = [
         Flight(
             departure_point="Melbourne",
@@ -156,6 +132,60 @@ def seed_tables():
 
     # Add to session
     db.session.add_all(flights)
+
+    # Create instance(s) of Aiport
+    airports = [
+        Airport(
+            name="Melbourne Aiport",
+            total_terminal_amount= 4,
+            international_terminal_amount= 2,
+            domestic_terminal_amount= 3,
+            number_of_runways= 2,
+            location_id=locations[0].id
+
+        ),
+        Airport(
+            name="Sydney Kingsford Smith Airport",
+            total_terminal_amount= 3,
+            international_terminal_amount= 1,
+            domestic_terminal_amount= 2,
+            number_of_runways= 3,
+            location_id=locations[1].id
+        )
+    ]
+
+    # Add to session
+    db.session.add_all(airports)
+
+    # Commit session here prior to creation of dependenent tables to generate foreign keys for them.
+    db.session.commit()
+
+    # Create an instance(s) of Staff
+    staff = [
+        Staff(
+            name="Jeanie Coleman",
+            age= 31,
+            gender= "Female",
+            employment= "Full-Time",
+            position= "Passenger Service Agent",
+            salary= 70000,
+            years_worked= 6,
+            airport_id=airports[0].id 
+        ),
+        Staff(
+            name="Felix Morrison",
+            age= 25,
+            gender= "Male",
+            employment= "Part-Time",
+            position= "Baggage Handler",
+            salary= 38000,
+            years_worked= 3,
+            airport_id=airports[1].id
+        )
+    ]
+
+    # Add to session
+    db.session.add_all(staff)
 
     # Commit session
     db.session.commit()

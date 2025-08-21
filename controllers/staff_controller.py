@@ -60,6 +60,7 @@ def create_a_staff():
             position=body_data.get("position"),
             salary=body_data.get("salary"),
             years_worked=body_data.get("years_worked"),
+            airport_id=body_data.get("airport_id")
         )
         # Add new staff data to session
         db.session.add(new_staff)
@@ -94,6 +95,7 @@ def update_staff(staff_id):
         staff.position = body_data.get("position") or staff.position
         staff.salary = body_data.get("salary") or staff.salary
         staff.years_worked = body_data.get("years_worked") or staff.years_worked
+        staff.airport_id = body_data.get("airport_id") or staff.airport_id
         # Commit changes
         db.session.commit()
         # Return data

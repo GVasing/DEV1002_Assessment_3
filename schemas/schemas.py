@@ -19,8 +19,8 @@ class AirlineSchema(SQLAlchemyAutoSchema):
         model = Airline
         load_instance = True
         include_relationships = True
-        fields = ("id", "airline_name", "origin", "fleet_size", "number_of_destinations")
         ordered = True
+        fields = ("id", "airline_name", "origin", "fleet_size", "number_of_destinations")
 
 class AirportSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -28,6 +28,19 @@ class AirportSchema(SQLAlchemyAutoSchema):
         load_instance = True
         include_fk = True
         include_relationships = True
+        ordered = True
+        fields = ("id", "name", "total_terminal_amount", "international_terminal_amount", "domestic_terminal_amount", "number_of_runways", "location_id", "location")
+
+    # staff = fields.Nested("StaffSchema", only=("airline_name",))
+    location = fields.Nested("LocationSchema", only=("city_name", "country_name"))
+
+    @validates("international_terminal_amount")
+    def validates_international_terminals(self, value):
+        if value is None:
+            raise ValidationError("International terminal amount is required")
+        
+        if value < 0:
+            raise ValidationError("Must be 0 or greater.")
 
 class BookingSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -52,6 +65,9 @@ class LocationSchema(SQLAlchemyAutoSchema):
         model = Location
         load_instance = True
         include_relationships = True
+        fields = ("id", "city_name", "country_name")
+
+    # airport = fields.Nested("AirportSchema", only=("name",))
 
 class PassengerSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -60,9 +76,9 @@ class PassengerSchema(SQLAlchemyAutoSchema):
         include_fk = True
         include_relationships = True
         ordered = True
-        fields = ("id", "name", "age", "gender", "plane")
+        fields = ("id", "name", "age", "gender", "plane_id", "plane")
     
-    # plane = fields.Nested("PlaneSchema", only=("id", "manufacturer", "model"))
+    plane = fields.Nested("PlaneSchema", only=("id", "manufacturer", "model"))
 
 class PlaneSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -79,6 +95,10 @@ class StaffSchema(SQLAlchemyAutoSchema):
         model = Staff
         load_instance = True
         include_relationships = True
+        ordered = True
+        fields = ("id", "name", "age", "gender", "employment", "position", "salary", "years_worked")
+
+    # airport = fields.Nested("AirportSchema", only=("name",))
 
 # Airline Schema for converting a single entry
 airline_schema = AirlineSchema()
