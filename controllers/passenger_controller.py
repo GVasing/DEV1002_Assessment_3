@@ -55,7 +55,8 @@ def create_a_passenger():
         new_passenger = Passenger(
             name=body_data.get("name"),
             age=body_data.get("age"),
-            gender=body_data.get("gender")
+            gender=body_data.get("gender"),
+            plane_id=body_data.get("plane_id")
         )
         # Add new passenger data to session
         db.session.add(new_passenger)
@@ -86,6 +87,7 @@ def update_passenger(passenger_id):
         passenger.name = body_data.get("name") or passenger.name
         passenger.age = body_data.get("age") or passenger.age
         passenger.gender = body_data.get("gender") or passenger.gender
+        passenger.plane_id = body_data.get("plane_id") or passenger.plane_id
         # Commit changes
         db.session.commit()
         # Return data
