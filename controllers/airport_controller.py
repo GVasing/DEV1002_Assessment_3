@@ -1,6 +1,7 @@
 # Installed imports
 from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import IntegrityError
+from marshmallow import ValidationError
 from psycopg2 import errorcodes
 
 # Created Module Imports
@@ -52,20 +53,30 @@ def create_a_airport():
         # GET info from the request body
         body_data = request.get_json()
         # Create a Airport Object from Airport class/model with body response data
-        new_airport = Airport(
-            name=body_data.get("name"),
-            total_terminal_amount=body_data.get("total_terminal_amount"),
-            international_terminal_amount=body_data.get("international_terminal_amount"),
-            domestic_terminal_amount=body_data.get("domestic_terminal_amount"),
-            number_of_runways=body_data.get("number_of_runways"),
-            location_id=body_data.get("location_id")
+        # new_airport = Airport(
+        #     name=body_data.get("name"),
+        #     total_terminal_amount=body_data.get("total_terminal_amount"),
+        #     international_terminal_amount=body_data.get("international_terminal_amount"),
+        #     domestic_terminal_amount=body_data.get("domestic_terminal_amount"),
+        #     number_of_runways=body_data.get("number_of_runways"),
+        #     location_id=body_data.get("location_id")
+        # )
+
+        new_airport = airport_schema.load(
+            body_data,
+            session=db.session   
         )
+
         # Add new airport data to session
         db.session.add(new_airport)
         # Commit the session
         db.session.commit()
         # Return
         return jsonify(airport_schema.dump(new_airport)), 201
+    except ValidationError as err:
+        return err.messages, 400
+    except ValueError as err:
+        return {"message": "Invalid format given or no data provided."}, 400
     except IntegrityError as err:
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {"message":f"Required field {err.orig.diag.column_name} cannot be null"}, 400
@@ -77,29 +88,51 @@ def create_a_airport():
 # PUT/PATCH /id
 @airport_bp.route("/<int:airport_id>", methods=["PUT", "PATCH"])
 def update_airport(airport_id):
-    # Define GET Statement
-    stmt = db.select(Airport).where(Airport.id == airport_id)
+    try:
+        # Define GET Statement
+        stmt = db.select(Airport).where(Airport.id == airport_id)
 
-    # Execute statement
-    airport = db.session.scalar(stmt)
+        # Execute statement
+        airport = db.session.scalar(stmt)
 
-    # If/Elif/Else Conditions
-    if airport:
-        # Retrieve 'airport' data
+        if not airport:
+            return {"message": f"Airport with id {airport_id} does not exist/cannot be found."}, 404
+        # If/Elif/Else Conditions
+        # if airport:
+        #     # Retrieve 'airport' data
+        #     body_data = request.get_json()
+        #     # Specify changes
+        #     airport.name = body_data.get("name") or airport.name
+        #     airport.total_terminal_amount = body_data.get("total_terminal_amount") or airport.total_terminal_amount
+        #     airport.international_terminal_amount = body_data.get("international_terminal_amount") or airport.international_terminal_amount
+        #     airport.domestic_terminal_amount = body_data.get("domestic_terminal_amount") or airport.domestic_terminal_amount
+        #     airport.number_of_runways = body_data.get("number_of_runways") or airport.number_of_runways
+        #     airport.location_id = body_data.get("location_id") or airport.location_id
+            # Commit changes
+        
         body_data = request.get_json()
-        # Specify changes
-        airport.name = body_data.get("name") or airport.name
-        airport.total_terminal_amount = body_data.get("total_terminal_amount") or airport.total_terminal_amount
-        airport.international_terminal_amount = body_data.get("international_terminal_amount") or airport.international_terminal_amount
-        airport.domestic_terminal_amount = body_data.get("domestic_terminal_amount") or airport.domestic_terminal_amount
-        airport.number_of_runways = body_data.get("number_of_runways") or airport.number_of_runways
-        airport.location_id = body_data.get("location_id") or airport.location_id
-        # Commit changes
+
+        updated_airport = airport_schema.load(
+            body_data,
+            instance=airport,
+            partial=True,
+            session=db.session
+        )
+
         db.session.commit()
         # Return data
-        return jsonify(airport_schema.dump(airport))
-    else:
-        return {"message": f"Airport with id {airport_id} does not exist/cannot be found."}, 404
+        return jsonify(airport_schema.dump(updated_airport))
+    except ValidationError as err:
+        return err.messages, 400
+    except ValueError as err:
+        return {"message": "Invalid format given or no data provided."}, 400
+    except IntegrityError as err:
+        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {"message":f"Required field {err.orig.diag.column_name} cannot be null"}, 400
+        elif err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
+            return {"message": err.orig.diag.message_detail}, 400
+        else:
+            return {"message": "Unexpected Error Occured"}, 400
 
 # DELETE /id
 @airport_bp.route("/<int:airport_id>", methods=["DELETE"])

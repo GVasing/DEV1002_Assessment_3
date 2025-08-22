@@ -4,9 +4,9 @@ from sqlalchemy.exc import IntegrityError, DataError
 from psycopg2 import errorcodes
 
 def register_error_handlers(app):
-    @app.errorhandler(ValidationError)
-    def handle_validation_error(err):
-        return jsonify({{err}: "Non null value must not be empty"}), 400
+    # @app.errorhandler(ValidationError)
+    # def handle_validation_error(err):
+    #     return jsonify({"message": "Non null value must not be empty"}), 400
     
     @app.errorhandler(IntegrityError)
     def handle_integrity_error(err):

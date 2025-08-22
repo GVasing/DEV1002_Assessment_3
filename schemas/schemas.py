@@ -4,14 +4,14 @@ from marshmallow.validate import Length, And, Regexp, Range, OneOf
 from marshmallow import validates, ValidationError, fields, validate
 
 # Created Module Imports
+from models.plane import Plane
+from models.location import Location
 from models.airline import Airline
 from models.airport import Airport
-from models.booking import Booking
-from models.flight import Flight
-from models.location import Location
-from models.passenger import Passenger
-from models.plane import Plane
 from models.staff import Staff
+from models.flight import Flight
+from models.passenger import Passenger
+from models.booking import Booking
 
 
 class AirlineSchema(SQLAlchemyAutoSchema):
@@ -32,15 +32,15 @@ class AirlineSchema(SQLAlchemyAutoSchema):
         if not origin:
             raise ValidationError("Non null value must not be empty")
         
-    @validates("fleet_size")
-    def validates_fleet_size(self, fleet_size, data_key):
-        if fleet_size <= 0:
-            raise ValueError
+    # @validates("fleet_size")
+    # def validates_fleet_size(self, fleet_size, data_key):
+    #     if fleet_size <= 0:
+    #         raise ValueError
         
-    @validates("number_of_destinations")
-    def validates_fleet_size(self, number_of_destinations, data_key):
-        if number_of_destinations <= 0:
-            raise ValueError
+    # @validates("number_of_destinations")
+    # def validates_fleet_size(self, number_of_destinations, data_key):
+    #     if number_of_destinations <= 0:
+    #         raise ValueError
 
 class AirportSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -51,16 +51,41 @@ class AirportSchema(SQLAlchemyAutoSchema):
         ordered = True
         fields = ("id", "name", "total_terminal_amount", "international_terminal_amount", "domestic_terminal_amount", "number_of_runways", "location_id", "location")
 
-    # staff = fields.Nested("StaffSchema", only=("airline_name",))
     location = fields.Nested("LocationSchema", only=("city_name", "country_name"))
 
+    @validates("name")
+    def validates_name(self, name, data_key):
+        if not name:
+            raise ValidationError("Non null value must not be empty")
+        
+    @validates("total_terminal_amount")
+    def validates_total_terminal_amount(self, total_terminal_amount, data_key):
+        if not total_terminal_amount:
+            raise ValidationError ("Enter a valid integer")
+        if total_terminal_amount < 0:
+            raise ValueError("Value must not be negative")
+    
     @validates("international_terminal_amount")
-    def validates_international_terminals(self, value):
-        if value is None:
+    def validates_international_terminals(self, international_terminal_amount, data_key):
+        if international_terminal_amount is None:
             raise ValidationError("International terminal amount is required")
         
-        if value < 0:
-            raise ValidationError("Must be 0 or greater.")
+        if international_terminal_amount < 0:
+            raise ValueError("Must be 0 or greater.")
+        
+    @validates("domestic_terminal_amount")
+    def validates_domestic_terminal_amount(self, domestic_terminal_amount, data_key):
+        if domestic_terminal_amount is None:
+            raise ValidationError("Domestic terminal amount is required")
+        if domestic_terminal_amount < 0:
+            raise ValueError("Value must not be negative")
+        
+    @validates("number_of_runways")
+    def validates_number_of_runways(self, number_of_runways, data_key):
+        if number_of_runways is None:
+            raise ValidationError("Domestic terminal amount is required")
+        if number_of_runways < 0:
+            raise ValueError("Value must not be negative")
 
 class BookingSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -143,9 +168,15 @@ class StaffSchema(SQLAlchemyAutoSchema):
         load_instance = True
         include_relationships = True
         ordered = True
-        fields = ("id", "name", "age", "gender", "employment", "position", "salary", "years_worked")
+        fields = ("id", "name", "age", "gender", "employment", "position", "salary", "years_worked", "airport_id", "airport")
 
-    # airport = fields.Nested("AirportSchema", only=("name",))
+    airport_id = fields.Integer(dump_only=True)
+    airport = fields.Nested("AirportSchema", only=("name",))
+
+    # @validates("name")
+    # def validates_range(self, model, data_key):
+    #     if not model:
+    #         raise ValidationError("Non null value must not be empty") 
 
 # Airline Schema for converting a single entry
 airline_schema = AirlineSchema()

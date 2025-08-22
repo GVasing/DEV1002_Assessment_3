@@ -22,5 +22,5 @@ class Airport(db.Model):
 
     # Define relationship
     location = db.relationship("Location", back_populates="airports")
-    staff = db.relationship("Staff", back_populates="airports", cascade = "all, delete")
+    staff = db.relationship("Staff", back_populates="airport", cascade = "all, delete")
     bookings = db.relationship("Booking", back_populates="airport")

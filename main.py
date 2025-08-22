@@ -39,12 +39,12 @@ def create_app():
     # Register Blueprint
     app.register_blueprint(db_commands)
     app.register_blueprint(location_bp)
+    app.register_blueprint(staff_bp)
     app.register_blueprint(airline_bp)
     app.register_blueprint(plane_bp)
-    app.register_blueprint(staff_bp)
+    app.register_blueprint(airport_bp)
     app.register_blueprint(passenger_bp)
     app.register_blueprint(flight_bp)
-    app.register_blueprint(airport_bp)
     app.register_blueprint(booking_bp)
     register_error_handlers(app)
 

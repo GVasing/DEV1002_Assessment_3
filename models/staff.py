@@ -23,4 +23,4 @@ class Staff(db.Model):
     airport_id = db.Column(db.Integer, db.ForeignKey("airports.id"), nullable=False)
 
     # Define Relationship
-    airports = db.relationship("Airport", back_populates="staff")
+    airport = db.relationship("Airport", back_populates="staff")
