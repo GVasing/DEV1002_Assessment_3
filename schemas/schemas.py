@@ -73,6 +73,22 @@ class LocationSchema(SQLAlchemyAutoSchema):
         include_relationships = True
         fields = ("id", "city_name", "country_name")
 
+    @validates("city_name")
+    def validates_city_name(self, city_name, data_key):
+        if not city_name:
+            raise ValidationError("City name is required.")
+        if len(city_name) < 2:
+            print("City name is too short")
+            raise ValidationError("City name is too short")
+    
+    @validates("country_name")
+    def validates_country_name(self, country_name, data_key):
+        if not country_name:
+            raise ValidationError("Country name is required.")
+        if len(country_name) < 2:
+            print("Country name is too short")
+            raise ValidationError("Country name is too short")
+
     # airport = fields.Nested("AirportSchema", only=("name",))
 
 class PassengerSchema(SQLAlchemyAutoSchema):

@@ -4,6 +4,7 @@ from init import db
 # Explain the purpose of this class
 class Location(db.Model):
     __tablename__ = "locations"
+    __table_args__ = (db.UniqueConstraint("city_name", "country_name", name="unique_city_country"),)
 
     # Attributes of 'Location' entity
 
