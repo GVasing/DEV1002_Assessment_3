@@ -112,6 +112,11 @@ class PlaneSchema(SQLAlchemyAutoSchema):
 
     manufacturer = auto_field(validate=OneOf(["Boeing", "Airbus", "Embraer", "Bombardier", "Cessna", "Pilatus", "ATR", "De Havilland Canada"], error="Manufacturer not within the available options"))
 
+    @validates("model")
+    def validates_range(self, model, data_key):
+        if not model:
+            raise ValidationError("Non null value must not be empty")
+
 class StaffSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Staff

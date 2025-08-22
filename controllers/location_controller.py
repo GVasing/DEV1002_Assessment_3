@@ -91,7 +91,6 @@ def update_location(location_id):
         # Execute statement
         location = db.session.scalar(stmt)
 
-
         if not location:
             return {"message": f"Location with id {location_id} does not exist/cannot be found."}, 404
         
