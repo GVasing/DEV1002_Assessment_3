@@ -22,6 +22,26 @@ class AirlineSchema(SQLAlchemyAutoSchema):
         ordered = True
         fields = ("id", "airline_name", "origin", "fleet_size", "number_of_destinations")
 
+    @validates("airline_name")
+    def validates_airline_name(self, airline_name, data_key):
+        if not airline_name:
+            raise ValidationError("Airline name is required.")
+    
+    @validates("origin")
+    def validates_range(self, origin, data_key):
+        if not origin:
+            raise ValidationError("Non null value must not be empty")
+        
+    @validates("fleet_size")
+    def validates_fleet_size(self, fleet_size, data_key):
+        if fleet_size <= 0:
+            raise ValueError
+        
+    @validates("number_of_destinations")
+    def validates_fleet_size(self, number_of_destinations, data_key):
+        if number_of_destinations <= 0:
+            raise ValueError
+
 class AirportSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Airport

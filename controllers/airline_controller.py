@@ -1,6 +1,7 @@
 # Installed imports
 from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import IntegrityError
+from marshmallow import ValidationError
 from psycopg2 import errorcodes
 
 # Created Module Imports
@@ -52,11 +53,15 @@ def create_a_airline():
         # GET info from the request body
         body_data = request.get_json()
         # Create a Airline Object from Airline class/model with body response data
-        new_airline = Airline(
-            airline_name=body_data.get("airline_name"),
-            origin=body_data.get("origin"),
-            fleet_size=body_data.get("fleet_size"),
-            number_of_destinations=body_data.get("number_of_destinations")
+        # new_airline = Airline(
+        #     airline_name=body_data.get("airline_name"),
+        #     origin=body_data.get("origin"),
+        #     fleet_size=body_data.get("fleet_size"),
+        #     number_of_destinations=body_data.get("number_of_destinations")
+        # )
+        new_airline = airline_schema.load(
+            body_data,
+            session=db.session
         )
         # Add new airline data to session
         db.session.add(new_airline)
@@ -64,6 +69,10 @@ def create_a_airline():
         db.session.commit()
         # Return
         return jsonify(airline_schema.dump(new_airline)), 201
+    except ValidationError as err:
+        return err.messages, 400
+    except ValueError as err:
+        return {"message": "Invalid format given, no data or non-positive integer provided."}, 400
     except IntegrityError as err:
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {"message":f"Required field {err.orig.diag.column_name} cannot be null"}, 400
@@ -75,27 +84,51 @@ def create_a_airline():
 # PUT/PATCH /id
 @airline_bp.route("/<int:airline_id>", methods=["PUT", "PATCH"])
 def update_airline(airline_id):
-    # Define GET Statement
-    stmt = db.select(Airline).where(Airline.id == airline_id)
+    try:
+        # Define GET Statement
+        stmt = db.select(Airline).where(Airline.id == airline_id)
 
-    # Execute statement
-    airline = db.session.scalar(stmt)
+        # Execute statement
+        airline = db.session.scalar(stmt)
 
-    # If/Elif/Else Conditions
-    if airline:
-        # Retrieve 'airline' data
+        if not airline:
+            return {"message": f"Airline with id {airline_id} does not exist/cannot be found."}, 404
+
+        # # If/Elif/Else Conditions
+        # if airline:
+        #     # Retrieve 'airline' data
+        #     body_data = request.get_json()
+        #     # Specify changes
+        #     airline.airline_name = body_data.get("airline_name") or airline.airline_name
+        #     airline.origin = body_data.get("origin") or airline.origin
+        #     airline.fleet_size = body_data.get("fleet_size") or airline.fleet_size
+        #     airline.number_of_destinations = body_data.get("number_of_destinations") or airline.number_of_destinations
+
         body_data = request.get_json()
-        # Specify changes
-        airline.airline_name = body_data.get("airline_name") or airline.airline_name
-        airline.origin = body_data.get("origin") or airline.origin
-        airline.fleet_size = body_data.get("fleet_size") or airline.fleet_size
-        airline.number_of_destinations = body_data.get("number_of_destinations") or airline.number_of_destinations
+
+        updated_airline = airline_schema.load(
+            body_data,
+            instance=airline,
+            partial=True,
+            session=db.session
+        )
+
         # Commit changes
         db.session.commit()
         # Return data
-        return jsonify(airline_schema.dump(airline))
-    else:
-        return {"message": f"Airline with id {airline_id} does not exist/cannot be found."}, 404
+        return jsonify(airline_schema.dump(updated_airline))
+        
+    except ValidationError as err:
+        return err.messages, 400
+    except ValueError as err:
+        return {"message": "Invalid format given, no data or non-positive integer provided."}, 400
+    except IntegrityError as err:
+        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {"message":f"Required field {err.orig.diag.column_name} cannot be null"}, 400
+        elif err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
+            return {"message": err.orig.diag.message_detail}, 400
+        else:
+            return {"message": "Unexpected Error Occured"}, 400
 
 # DELETE /id
 @airline_bp.route("/<int:airline_id>", methods=["DELETE"])

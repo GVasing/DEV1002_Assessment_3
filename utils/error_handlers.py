@@ -6,7 +6,7 @@ from psycopg2 import errorcodes
 def register_error_handlers(app):
     @app.errorhandler(ValidationError)
     def handle_validation_error(err):
-        return jsonify(err.messages), 400
+        return jsonify({{err}: "Non null value must not be empty"}), 400
     
     @app.errorhandler(IntegrityError)
     def handle_integrity_error(err):
