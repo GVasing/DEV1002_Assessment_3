@@ -1,7 +1,7 @@
 # Installed imports
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
-from marshmallow.validate import Length, And, Regexp, Range, OneOf
-from marshmallow import validates, ValidationError, fields, validate
+from marshmallow.validate import OneOf
+from marshmallow import validates, ValidationError, fields
 
 # Created Module Imports
 from models.plane import Plane
@@ -99,6 +99,8 @@ class BookingSchema(SQLAlchemyAutoSchema):
     airport = fields.Nested("AirportSchema", only=("name", "location"))
     flight = fields.Nested("FlightSchema", only=("destination",))
     passenger = fields.Nested("PassengerSchema", only=("name", ))
+
+    cabin_class = auto_field(validate=OneOf(["Economy", "Premium Economy", "Business", "Business Class", "First Class"], error="cabin class not recognised"))
 
 class FlightSchema(SQLAlchemyAutoSchema):
     class Meta:
