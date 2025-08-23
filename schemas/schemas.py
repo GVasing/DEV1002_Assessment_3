@@ -32,15 +32,15 @@ class AirlineSchema(SQLAlchemyAutoSchema):
         if not origin:
             raise ValidationError("Non null value must not be empty")
         
-    # @validates("fleet_size")
-    # def validates_fleet_size(self, fleet_size, data_key):
-    #     if fleet_size <= 0:
-    #         raise ValueError
+    @validates("fleet_size")
+    def validates_fleet_size(self, fleet_size, data_key):
+        if fleet_size <= 0:
+            raise ValueError
         
-    # @validates("number_of_destinations")
-    # def validates_fleet_size(self, number_of_destinations, data_key):
-    #     if number_of_destinations <= 0:
-    #         raise ValueError
+    @validates("number_of_destinations")
+    def validates_fleet_size(self, number_of_destinations, data_key):
+        if number_of_destinations <= 0:
+            raise ValueError
 
 class AirportSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -111,6 +111,21 @@ class FlightSchema(SQLAlchemyAutoSchema):
 
     airline = fields.Nested("AirlineSchema", only=("airline_name",))
 
+    @validates("departure_point")
+    def validates_departure_point(self, departure_point, data_key):
+        if not departure_point:
+            raise ValidationError("Departure Point non null value must not be empty")
+        
+    @validates("destination")
+    def validates_destination(self, destination, data_key):
+        if not destination:
+            raise ValidationError("Destination non null value must not be empty")\
+            
+    @validates("flight_code")
+    def validates_flight_code(self, flight_code, data_key):
+        if not flight_code:
+            raise ValidationError("Flight Code non null value must not be empty")
+
 class LocationSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Location
@@ -147,6 +162,13 @@ class PassengerSchema(SQLAlchemyAutoSchema):
     
     plane = fields.Nested("PlaneSchema", only=("id", "manufacturer", "model"))
 
+    @validates("name")
+    def validates_passenger_name(self, name, data_key):
+        if not name:
+            raise ValidationError("Name non null value must not be empty")
+    
+    gender = auto_field(validate=OneOf(["Male", "Female", "Non-Binary"], error="Please select from: 'Male', 'Female', 'Non-Binary'"))
+
 class PlaneSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Plane
@@ -173,10 +195,12 @@ class StaffSchema(SQLAlchemyAutoSchema):
     airport_id = fields.Integer(dump_only=True)
     airport = fields.Nested("AirportSchema", only=("name",))
 
-    # @validates("name")
-    # def validates_range(self, model, data_key):
-    #     if not model:
-    #         raise ValidationError("Non null value must not be empty") 
+    @validates("name")
+    def validates_staff_member_name(self, name, data_key):
+        if not name:
+            raise ValidationError("Name non null value must not be empty") 
+        
+    employment = auto_field(validate=OneOf(["Full-Time", "Part-Time", "Casual", "Contract"], error="Employment options must be one of the following:'Full-Time', 'Part-Time', 'Casual', 'Contract'"))
 
 # Airline Schema for converting a single entry
 airline_schema = AirlineSchema()

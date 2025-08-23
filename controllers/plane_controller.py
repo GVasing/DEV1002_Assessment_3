@@ -78,7 +78,7 @@ def create_a_plane():
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {"message":f"Required field {err.orig.diag.column_name} cannot be null"}, 400
         if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
-            return {"message": "Airline name must be unique"}, 400
+            return {"message": "Model name must be unique"}, 400
         else:
             return {"message": "Unexpected Error Occured"}, 400
         

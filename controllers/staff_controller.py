@@ -52,6 +52,12 @@ def create_a_staff():
     try:
         # GET info from the request body
         body_data = request.get_json()
+
+        errors = staff_schema.validate(body_data, session=db.session)
+
+        if errors:
+            return {"message": "Validation failed", "errors": errors}, 400
+        
         # # Create a Staff Object from Staff class/model with body response data
         new_staff = Staff(
             name=body_data.get("name"),
@@ -77,8 +83,8 @@ def create_a_staff():
         return jsonify(staff_schema.dump(new_staff)), 201
     except ValidationError as err:
         return err.messages, 400
-    except ValueError as err:
-        return {"message": "Invalid format given or no data provided."}, 400
+    # except ValueError as err:
+    #     return {"message": "Invalid format given or no data provided."}, 400
     except IntegrityError as err:
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {"message":f"Required field {err.orig.diag.column_name} cannot be null"}, 400

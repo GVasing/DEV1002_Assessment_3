@@ -1,6 +1,7 @@
 # Installed imports
 from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import IntegrityError
+from marshmallow import ValidationError
 from psycopg2 import errorcodes
 
 # Created Module Imports
@@ -52,15 +53,20 @@ def create_a_flight():
         # GET info from the request body
         body_data = request.get_json()
         # Create a Flight Object from Flight class/model with body response data
-        new_flight = Flight(
-            departure_point=body_data.get("departure_point"),
-            destination=body_data.get("destination"),
-            flight_code=body_data.get("flight_code"),
-            departure_time=body_data.get("departure_time"),
-            arrival_time=body_data.get("arrival_time"),
-            departure_date=body_data.get("departure_date"),
-            flight_duration=body_data.get("flight_duration"),
-            airline_id=body_data.get("airline_id")
+        # new_flight = Flight(
+        #     departure_point=body_data.get("departure_point"),
+        #     destination=body_data.get("destination"),
+        #     flight_code=body_data.get("flight_code"),
+        #     departure_time=body_data.get("departure_time"),
+        #     arrival_time=body_data.get("arrival_time"),
+        #     departure_date=body_data.get("departure_date"),
+        #     flight_duration=body_data.get("flight_duration"),
+        #     airline_id=body_data.get("airline_id")
+        # )
+
+        new_flight = flight_schema.load(
+            body_data,
+            session=db.session
         )
         # Add new flight data to session
         db.session.add(new_flight)
@@ -68,42 +74,70 @@ def create_a_flight():
         db.session.commit()
         # Return
         return jsonify(flight_schema.dump(new_flight)), 201
+    except ValidationError as err:
+        return err.messages, 400
+    except ValueError as err:
+        return {"message": "Invalid format given or no data provided."}, 400
     except IntegrityError as err:
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {"message":f"Required field {err.orig.diag.column_name} cannot be null"}, 400
         if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
-            return {"message": "Airline name must be unique"}, 400
+            return {"message": "Flight code must be unique"}, 400
         else:
             return {"message": "Unexpected Error Occured"}, 400
         
 # PUT/PATCH /id
 @flight_bp.route("/<int:flight_id>", methods=["PUT", "PATCH"])
 def update_flight(flight_id):
-    # Define GET Statement
-    stmt = db.select(Flight).where(Flight.id == flight_id)
+    try:
+        # Define GET Statement
+        stmt = db.select(Flight).where(Flight.id == flight_id)
 
-    # Execute statement
-    flight = db.session.scalar(stmt)
+        # Execute statement
+        flight = db.session.scalar(stmt)
 
-    # If/Elif/Else Conditions
-    if flight:
-        # Retrieve 'flight' data
+        if not flight:
+            return {"message": f"Flight with id {flight_id} does not exist/cannot be found."}, 404
+
+        # # If/Elif/Else Conditions
+        # if flight:
+        #     # Retrieve 'flight' data
+        #     body_data = request.get_json()
+        #     # Specify changes
+        #     flight.departure_point = body_data.get("departure_point") or flight.departure_point
+        #     flight.destination = body_data.get("destination") or flight.destination
+        #     flight.flight_code = body_data.get("flight_code") or flight.flight_code
+        #     flight.departure_time = body_data.get("departure_time") or flight.departure_time
+        #     flight.arrival_time = body_data.get("arrival_time") or flight.arrival_time
+        #     flight.departure_date = body_data.get("departure_date") or flight.departure_date
+        #     flight.flight_duration = body_data.get("flight_duration") or flight.flight_duration
+        #     flight.airline_id = body_data.get("airline_id") or flight.airline_id
+
         body_data = request.get_json()
-        # Specify changes
-        flight.departure_point = body_data.get("departure_point") or flight.departure_point
-        flight.destination = body_data.get("destination") or flight.destination
-        flight.flight_code = body_data.get("flight_code") or flight.flight_code
-        flight.departure_time = body_data.get("departure_time") or flight.departure_time
-        flight.arrival_time = body_data.get("arrival_time") or flight.arrival_time
-        flight.departure_date = body_data.get("departure_date") or flight.departure_date
-        flight.flight_duration = body_data.get("flight_duration") or flight.flight_duration
-        flight.airline_id = body_data.get("airline_id") or flight.airline_id
+
+        updated_flight = flight_schema.load(
+            body_data,
+            instance=flight,
+            partial=True,
+            session=db.session
+        )
+
         # Commit changes
         db.session.commit()
         # Return data
-        return jsonify(flight_schema.dump(flight))
-    else:
-        return {"message": f"Flight with id {flight_id} does not exist/cannot be found."}, 404
+        return jsonify(flight_schema.dump(updated_flight))
+    except ValidationError as err:
+        return err.messages, 400
+    except ValueError as err:
+        return {"message": "Invalid format given or no data provided."}, 400
+    except IntegrityError as err:
+        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {"message":f"Required field {err.orig.diag.column_name} cannot be null"}, 400
+        elif err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
+            return {"message": err.orig.diag.message_detail}, 400
+        else:
+            return {"message": "Unexpected Error Occured"}, 400
+            
 
 # DELETE /id
 @flight_bp.route("/<int:flight_id>", methods=["DELETE"])

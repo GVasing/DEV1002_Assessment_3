@@ -1,6 +1,7 @@
 # Installed imports
 from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import IntegrityError
+from marshmallow import ValidationError
 from psycopg2 import errorcodes
 
 # Created Module Imports
@@ -52,12 +53,18 @@ def create_a_passenger():
         # GET info from the request body
         body_data = request.get_json()
         # Create a Passenger Object from Passenger class/model with body response data
-        new_passenger = Passenger(
-            name=body_data.get("name"),
-            age=body_data.get("age"),
-            gender=body_data.get("gender"),
-            plane_id=body_data.get("plane_id")
+        # new_passenger = Passenger(
+        #     name=body_data.get("name"),
+        #     age=body_data.get("age"),
+        #     gender=body_data.get("gender"),
+        #     plane_id=body_data.get("plane_id")
+        # )
+
+        new_passenger = passenger_schema.load(
+            body_data,
+            session=db.session
         )
+
         # Add new passenger data to session
         db.session.add(new_passenger)
         # Commit the session
@@ -73,27 +80,51 @@ def create_a_passenger():
 # PUT/PATCH /id
 @passenger_bp.route("/<int:passenger_id>", methods=["PUT", "PATCH"])
 def update_passenger(passenger_id):
-    # Define GET Statement
-    stmt = db.select(Passenger).where(Passenger.id == passenger_id)
+    try:
+        # Define GET Statement
+        stmt = db.select(Passenger).where(Passenger.id == passenger_id)
 
-    # Execute statement
-    passenger = db.session.scalar(stmt)
+        # Execute statement
+        passenger = db.session.scalar(stmt)
 
-    # If/Elif/Else Conditions
-    if passenger:
-        # Retrieve 'passenger' data
+        if not passenger:
+            return {"message": f"Passenger with id {passenger_id} does not exist/cannot be found."}, 404
+
+        # # If/Elif/Else Conditions
+        # if passenger:
+        #     # Retrieve 'passenger' data
+        #     body_data = request.get_json()
+        #     # Specify changes
+        #     passenger.name = body_data.get("name") or passenger.name
+        #     passenger.age = body_data.get("age") or passenger.age
+        #     passenger.gender = body_data.get("gender") or passenger.gender
+        #     passenger.plane_id = body_data.get("plane_id") or passenger.plane_id
+
         body_data = request.get_json()
-        # Specify changes
-        passenger.name = body_data.get("name") or passenger.name
-        passenger.age = body_data.get("age") or passenger.age
-        passenger.gender = body_data.get("gender") or passenger.gender
-        passenger.plane_id = body_data.get("plane_id") or passenger.plane_id
+
+        updated_passenger = passenger_schema.load(
+            body_data,
+            instance=passenger,
+            partial=True,
+            session=db.session
+        )
+
         # Commit changes
         db.session.commit()
         # Return data
-        return jsonify(passenger_schema.dump(passenger))
-    else:
-        return {"message": f"Passenger with id {passenger_id} does not exist/cannot be found."}, 404
+        return jsonify(passenger_schema.dump(updated_passenger))
+    except ValidationError as err:
+        return err.messages, 400
+    except ValueError as err:
+        return {"message": "Invalid format given or no data provided."}, 400
+    except IntegrityError as err:
+        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {"message":f"Required field {err.orig.diag.column_name} cannot be null"}, 400
+        elif err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
+            return {"message": err.orig.diag.message_detail}, 400
+        else:
+            return {"message": "Unexpected Error Occured"}, 400
+            
 
 # DELETE /id
 @passenger_bp.route("/<int:passenger_id>", methods=["DELETE"])
