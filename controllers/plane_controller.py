@@ -52,15 +52,7 @@ def create_plane():
     try:
         # GET info from the request body
         body_data = request.get_json()
-        
-        # Create a Plane Object from Plane class/model with body response data
-        # new_plane = Plane(
-        #     manufacturer=body_data.get("manufacturer"),
-        #     model=body_data.get("model"),
-        #     range=body_data.get("range"),
-        #     passenger_capacity=body_data.get("passenger_capacity"),
-        #     fuel_capacity=body_data.get("fuel_capacity")
-        # )
+
         new_plane = plane_schema.load(
             body_data,
             session=db.session
@@ -74,7 +66,7 @@ def create_plane():
     except ValidationError as err:
         return err.messages, 400
     except ValueError as err:
-        return {"message": "Invalid format given or no data provided."}, 400
+        return {"message": "Invalid format given, no data provided, or value zero or less."}, 400
     except IntegrityError as err:
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {"message":f"Required field {err.orig.diag.column_name} cannot be null"}, 400
@@ -95,17 +87,6 @@ def update_plane(plane_id):
 
         if not plane:
             return {"message": f"Plane with id {plane_id} does not exist/cannot be found."}, 404
-
-        # # If/Elif/Else Conditions
-        # if plane:
-        #     # Retrieve 'plane' data
-        #     body_data = request.get_json()
-        #     # Specify changes
-        #     plane.manufacturer = body_data.get("manufacturer") or plane.manufacturer
-        #     plane.model = body_data.get("model") or plane.model
-        #     plane.range = body_data.get("range") or plane.range
-        #     plane.passenger_capacity = body_data.get("passenger_capacity") or plane.passenger_capacity
-        #     plane.fuel_capacity = body_data.get("fuel_capacity") or plane.fuel_capacity
 
         body_data = request.get_json()
 

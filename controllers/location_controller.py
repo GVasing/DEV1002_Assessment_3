@@ -52,13 +52,7 @@ def create_location():
     try:
         # GET info from the request body
         body_data = request.get_json()
-        # if body_data is None:
-        #     return {"message": "Invalid format given or no data provided."}, 400
-        # Create a Location Object from Location class/model with body response data
-        # new_location = Location(
-        #     city_name=body_data.get("city_name"),
-        #     country_name=body_data.get("country_name"),
-        # )
+
         new_location = location_schema.load(
             body_data,
             session=db.session
@@ -94,13 +88,6 @@ def update_location(location_id):
         if not location:
             return {"message": f"Location with id {location_id} does not exist/cannot be found."}, 404
         
-        # # If/Elif/Else Conditions
-        # if location:
-            # Retrieve 'location' data
-            # body_data = request.get_json()
-        #     # Specify changes
-        #     location.city_name = body_data.get("city_name") or location.city_name
-        #     location.country_name = body_data.get("country_name") or location.country_name
         body_data = request.get_json()
 
         updated_location = location_schema.load(

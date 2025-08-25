@@ -52,17 +52,6 @@ def create_flight():
     try:
         # GET info from the request body
         body_data = request.get_json()
-        # Create a Flight Object from Flight class/model with body response data
-        # new_flight = Flight(
-        #     departure_point=body_data.get("departure_point"),
-        #     destination=body_data.get("destination"),
-        #     flight_code=body_data.get("flight_code"),
-        #     departure_time=body_data.get("departure_time"),
-        #     arrival_time=body_data.get("arrival_time"),
-        #     departure_date=body_data.get("departure_date"),
-        #     flight_duration=body_data.get("flight_duration"),
-        #     airline_id=body_data.get("airline_id")
-        # )
 
         new_flight = flight_schema.load(
             body_data,
@@ -98,20 +87,6 @@ def update_flight(flight_id):
 
         if not flight:
             return {"message": f"Flight with id {flight_id} does not exist/cannot be found."}, 404
-
-        # # If/Elif/Else Conditions
-        # if flight:
-        #     # Retrieve 'flight' data
-        #     body_data = request.get_json()
-        #     # Specify changes
-        #     flight.departure_point = body_data.get("departure_point") or flight.departure_point
-        #     flight.destination = body_data.get("destination") or flight.destination
-        #     flight.flight_code = body_data.get("flight_code") or flight.flight_code
-        #     flight.departure_time = body_data.get("departure_time") or flight.departure_time
-        #     flight.arrival_time = body_data.get("arrival_time") or flight.arrival_time
-        #     flight.departure_date = body_data.get("departure_date") or flight.departure_date
-        #     flight.flight_duration = body_data.get("flight_duration") or flight.flight_duration
-        #     flight.airline_id = body_data.get("airline_id") or flight.airline_id
 
         body_data = request.get_json()
 

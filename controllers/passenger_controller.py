@@ -52,13 +52,6 @@ def create_passenger():
     try:
         # GET info from the request body
         body_data = request.get_json()
-        # Create a Passenger Object from Passenger class/model with body response data
-        # new_passenger = Passenger(
-        #     name=body_data.get("name"),
-        #     age=body_data.get("age"),
-        #     gender=body_data.get("gender"),
-        #     plane_id=body_data.get("plane_id")
-        # )
 
         new_passenger = passenger_schema.load(
             body_data,
@@ -71,9 +64,15 @@ def create_passenger():
         db.session.commit()
         # Return
         return jsonify(passenger_schema.dump(new_passenger)), 201
+    except ValidationError as err:
+        return err.messages, 400
+    except ValueError as err:
+        return {"message": "Invalid format given or no data provided."}, 400
     except IntegrityError as err:
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {"message":f"Required field {err.orig.diag.column_name} cannot be null"}, 400
+        elif err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
+            return {"message": err.orig.diag.message_detail}, 400
         else:
             return {"message": "Unexpected Error Occured"}, 400
         
@@ -89,16 +88,6 @@ def update_passenger(passenger_id):
 
         if not passenger:
             return {"message": f"Passenger with id {passenger_id} does not exist/cannot be found."}, 404
-
-        # # If/Elif/Else Conditions
-        # if passenger:
-        #     # Retrieve 'passenger' data
-        #     body_data = request.get_json()
-        #     # Specify changes
-        #     passenger.name = body_data.get("name") or passenger.name
-        #     passenger.age = body_data.get("age") or passenger.age
-        #     passenger.gender = body_data.get("gender") or passenger.gender
-        #     passenger.plane_id = body_data.get("plane_id") or passenger.plane_id
 
         body_data = request.get_json()
 

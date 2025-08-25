@@ -24,13 +24,13 @@ class AirlineSchema(SQLAlchemyAutoSchema):
 
     @validates("airline_name")
     def validates_airline_name(self, airline_name, data_key):
-        if not airline_name:
+        if len(airline_name) < 2:
             raise ValidationError("Airline name is required.")
     
     @validates("origin")
     def validates_range(self, origin, data_key):
-        if not origin:
-            raise ValidationError("Non null value must not be empty")
+        if len(origin) < 2:
+            raise ValidationError("Origin is required.")
         
     @validates("fleet_size")
     def validates_fleet_size(self, fleet_size, data_key):
@@ -40,7 +40,7 @@ class AirlineSchema(SQLAlchemyAutoSchema):
     @validates("number_of_destinations")
     def validates_number_of_destinations(self, number_of_destinations, data_key):
         if number_of_destinations <= 0:
-            raise ValidationError
+            raise ValidationError("Number of destinations cannot be zero or less.")
 
 class AirportSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -56,36 +56,33 @@ class AirportSchema(SQLAlchemyAutoSchema):
     @validates("name")
     def validates_name(self, name, data_key):
         if not name:
-            raise ValidationError("Non null value must not be empty")
+            raise ValidationError("Airport name must not be empty")
+        if len(name) < 1:
+            raise ValidationError("Airport name must not be empty")
         
     @validates("total_terminal_amount")
     def validates_total_terminal_amount(self, total_terminal_amount, data_key):
-        if total_terminal_amount == None:
-            raise ValidationError ("Enter a valid integer")
-        if total_terminal_amount < 0:
-            raise ValueError("Value must not be negative")
+        if not total_terminal_amount:
+            raise ValidationError("Enter a positive or valid integer, or null.")
+        if total_terminal_amount <= 0:
+            raise ValueError("Value must not be zero or less.")
     
     @validates("international_terminal_amount")
     def validates_international_terminals(self, international_terminal_amount, data_key):
-        if international_terminal_amount is None:
-            raise ValidationError("International terminal amount is required")
-        
-        if international_terminal_amount < 0:
-            raise ValueError("Must be 0 or greater.")
+        if international_terminal_amount == 0:
+            pass
+        elif type(international_terminal_amount) != int:
+            raise ValidationError("Enter a valid integer or null.")
         
     @validates("domestic_terminal_amount")
     def validates_domestic_terminal_amount(self, domestic_terminal_amount, data_key):
-        if domestic_terminal_amount is None:
-            raise ValidationError("Domestic terminal amount is required")
-        if domestic_terminal_amount < 0:
-            raise ValueError("Value must not be negative")
+        if not domestic_terminal_amount:
+            raise ValidationError("Enter a positive integer or null.")
         
     @validates("number_of_runways")
     def validates_number_of_runways(self, number_of_runways, data_key):
-        if number_of_runways is None:
-            raise ValidationError("Domestic terminal amount is required")
-        if number_of_runways < 0:
-            raise ValueError("Value must not be negative")
+        if number_of_runways <= 0:
+            raise ValueError("Value must not be zero or less. For none, enter null.")
 
 class BookingSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -151,8 +148,6 @@ class LocationSchema(SQLAlchemyAutoSchema):
             print("Country name is too short")
             raise ValidationError("Country name is too short")
 
-    # airport = fields.Nested("AirportSchema", only=("name",))
-
 class PassengerSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Passenger
@@ -167,9 +162,9 @@ class PassengerSchema(SQLAlchemyAutoSchema):
     @validates("name")
     def validates_passenger_name(self, name, data_key):
         if not name:
-            raise ValidationError("Name non null value must not be empty")
+            raise ValidationError("Name must not be empty string.")
     
-    gender = auto_field(validate=OneOf(["Male", "Female", "Non-Binary"], error="Please select from: 'Male', 'Female', 'Non-Binary'"))
+    gender = auto_field(validate=OneOf(["Male", "Female", "Non-Binary", "Other"], error="Please select from: 'Male', 'Female', 'Non-Binary', 'Other'"))
 
 class PlaneSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -184,7 +179,17 @@ class PlaneSchema(SQLAlchemyAutoSchema):
     @validates("model")
     def validates_range(self, model, data_key):
         if not model:
-            raise ValidationError("Non null value must not be empty")
+            raise ValidationError("Model must not be empty")
+        
+    @validates("passenger_capacity")
+    def validates_passenger_capacity(self, passenger_capacity, data_key):
+        if passenger_capacity < 1:
+            raise ValueError
+        
+    @validates("fuel_capacity")
+    def validates_fuel_capacity(self, fuel_capacity, data_key):
+        if fuel_capacity < 1:
+            raise ValueError
 
 class StaffSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -204,7 +209,7 @@ class StaffSchema(SQLAlchemyAutoSchema):
         
     employment = auto_field(validate=OneOf(["Full-Time", "Part-Time", "Casual", "Contract"], error="Employment options must be one of the following:'Full-Time', 'Part-Time', 'Casual', 'Contract'"))
 
-    gender = auto_field(validate=OneOf(["Male", "Female", "Non-Binary"], error="Please select from: 'Male', 'Female', 'Non-Binary'"))
+    gender = auto_field(validate=OneOf(["Male", "Female", "Non-Binary", "Other"], error="Please select from: 'Male', 'Female', 'Non-Binary', 'Other'"))
 
 # Airline Schema for converting a single entry
 airline_schema = AirlineSchema()

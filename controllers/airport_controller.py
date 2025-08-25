@@ -52,15 +52,6 @@ def create_airport():
     try:
         # GET info from the request body
         body_data = request.get_json()
-        # Create a Airport Object from Airport class/model with body response data
-        # new_airport = Airport(
-        #     name=body_data.get("name"),
-        #     total_terminal_amount=body_data.get("total_terminal_amount"),
-        #     international_terminal_amount=body_data.get("international_terminal_amount"),
-        #     domestic_terminal_amount=body_data.get("domestic_terminal_amount"),
-        #     number_of_runways=body_data.get("number_of_runways"),
-        #     location_id=body_data.get("location_id")
-        # )
 
         new_airport = airport_schema.load(
             body_data,
@@ -81,7 +72,7 @@ def create_airport():
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {"message":f"Required field {err.orig.diag.column_name} cannot be null"}, 400
         if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
-            return {"message": "Airline name must be unique"}, 400
+            return {"message": "Airport name must be unique"}, 400
         else:
             return {"message": "Unexpected Error Occured"}, 400
         
@@ -97,18 +88,6 @@ def update_airport(airport_id):
 
         if not airport:
             return {"message": f"Airport with id {airport_id} does not exist/cannot be found."}, 404
-        # If/Elif/Else Conditions
-        # if airport:
-        #     # Retrieve 'airport' data
-        #     body_data = request.get_json()
-        #     # Specify changes
-        #     airport.name = body_data.get("name") or airport.name
-        #     airport.total_terminal_amount = body_data.get("total_terminal_amount") or airport.total_terminal_amount
-        #     airport.international_terminal_amount = body_data.get("international_terminal_amount") or airport.international_terminal_amount
-        #     airport.domestic_terminal_amount = body_data.get("domestic_terminal_amount") or airport.domestic_terminal_amount
-        #     airport.number_of_runways = body_data.get("number_of_runways") or airport.number_of_runways
-        #     airport.location_id = body_data.get("location_id") or airport.location_id
-            # Commit changes
         
         body_data = request.get_json()
 

@@ -53,23 +53,6 @@ def create_staff():
         # GET info from the request body
         body_data = request.get_json()
 
-        # errors = staff_schema.validate(body_data, session=db.session)
-
-        # if errors:
-        #     return {"message": "Validation failed", "errors": errors}, 400
-        
-        # # # Create a Staff Object from Staff class/model with body response data
-        # new_staff = Staff(
-        #     name=body_data.get("name"),
-        #     age=body_data.get("age"),
-        #     gender=body_data.get("gender"),
-        #     employment=body_data.get("employment"),
-        #     position=body_data.get("position"),
-        #     salary=body_data.get("salary"),
-        #     years_worked=body_data.get("years_worked"),
-        #     airport_id=body_data.get("airport_id")
-        # )
-
         new_staff = staff_schema.load(
             body_data,
             session=db.session
@@ -103,22 +86,6 @@ def update_staff(staff_id):
 
         if not staff:
             return {"message": f"Staff with id {staff_id} does not exist/cannot be found."}, 404
-
-        # # If/Elif/Else Conditions
-        # if staff:
-        #     # Retrieve 'staff' data
-        #     body_data = request.get_json()
-        #     # Specify changes
-        #     staff.name = body_data.get("name") or staff.name
-        #     staff.age = body_data.get("age") or staff.age
-        #     staff.gender = body_data.get("gender") or staff.gender
-        #     staff.employment = body_data.get("employment") or staff.employment
-        #     staff.position = body_data.get("position") or staff.position
-        #     staff.salary = body_data.get("salary") or staff.salary
-        #     staff.years_worked = body_data.get("years_worked") or staff.years_worked
-        #     staff.airport_id = body_data.get("airport_id") or staff.airport_id
-        # else:
-        #     return {"message": f"Staff with id {staff_id} does not exist/cannot be found."}, 404
 
         body_data = request.get_json()
 

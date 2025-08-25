@@ -11,7 +11,7 @@ class Airline(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # Non-Key attributes
-    airline_name = db.Column(db.String(100), nullable=False)
+    airline_name = db.Column(db.String(100), nullable=False, unique=True)
     origin = db.Column(db.String(100), nullable=False)
     fleet_size = db.Column(db.Integer)
     number_of_destinations = db.Column(db.Integer)

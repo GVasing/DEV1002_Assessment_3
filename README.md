@@ -39,6 +39,7 @@ __Feedback Lot 3:__
 
 ### Response & Implementation
 
+- Global error handling removed.
 - Also, since a lot of the controller error handling has generic error responses, try personalising the messages more, otherwise it defeats the purpose of a global error handler.
 - Endpoints added to documentation.
 

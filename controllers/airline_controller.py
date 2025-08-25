@@ -52,13 +52,7 @@ def create_airline():
     try:
         # GET info from the request body
         body_data = request.get_json()
-        # Create a Airline Object from Airline class/model with body response data
-        # new_airline = Airline(
-        #     airline_name=body_data.get("airline_name"),
-        #     origin=body_data.get("origin"),
-        #     fleet_size=body_data.get("fleet_size"),
-        #     number_of_destinations=body_data.get("number_of_destinations")
-        # )
+        
         new_airline = airline_schema.load(
             body_data,
             session=db.session
@@ -93,16 +87,6 @@ def update_airline(airline_id):
 
         if not airline:
             return {"message": f"Airline with id {airline_id} does not exist/cannot be found."}, 404
-
-        # # If/Elif/Else Conditions
-        # if airline:
-        #     # Retrieve 'airline' data
-        #     body_data = request.get_json()
-        #     # Specify changes
-        #     airline.airline_name = body_data.get("airline_name") or airline.airline_name
-        #     airline.origin = body_data.get("origin") or airline.origin
-        #     airline.fleet_size = body_data.get("fleet_size") or airline.fleet_size
-        #     airline.number_of_destinations = body_data.get("number_of_destinations") or airline.number_of_destinations
 
         body_data = request.get_json()
 
