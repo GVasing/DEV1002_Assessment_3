@@ -16,7 +16,6 @@ from controllers.passenger_controller import passenger_bp
 from controllers.flight_controller import flight_bp
 from controllers.airport_controller import airport_bp
 from controllers.booking_controller import booking_bp
-from utils.error_handlers import register_error_handlers
 
 # Explain what this does
 load_dotenv()
@@ -46,7 +45,6 @@ def create_app():
     app.register_blueprint(passenger_bp)
     app.register_blueprint(flight_bp)
     app.register_blueprint(booking_bp)
-    register_error_handlers(app)
 
     # App is returned
     return app
