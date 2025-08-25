@@ -48,7 +48,7 @@ def get_a_location(location_id):
     
 # POST /
 @location_bp.route("/", methods=["POST"])
-def create_a_location():
+def create_location():
     try:
         # GET info from the request body
         body_data = request.get_json()
@@ -128,7 +128,7 @@ def update_location(location_id):
 
 # DELETE /id
 @location_bp.route("/<int:location_id>", methods=["DELETE"])
-def delete_a_location(location_id):
+def delete_location(location_id):
         # Find the location with the location_id
     stmt = db.select(Location).where(Location.id == location_id)
     location = db.session.scalar(stmt)

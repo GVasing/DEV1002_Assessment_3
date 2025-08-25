@@ -48,7 +48,7 @@ def get_a_passenger(passenger_id):
     
 # POST /
 @passenger_bp.route("/", methods=["POST"])
-def create_a_passenger():
+def create_passenger():
     try:
         # GET info from the request body
         body_data = request.get_json()
@@ -128,7 +128,7 @@ def update_passenger(passenger_id):
 
 # DELETE /id
 @passenger_bp.route("/<int:passenger_id>", methods=["DELETE"])
-def delete_a_passenger(passenger_id):
+def delete_passenger(passenger_id):
         # Find the passenger with the passenger_id
     stmt = db.select(Passenger).where(Passenger.id == passenger_id)
     passenger = db.session.scalar(stmt)

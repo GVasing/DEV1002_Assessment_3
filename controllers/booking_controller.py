@@ -48,7 +48,7 @@ def get_a_booking(booking_id):
     
 # POST /
 @booking_bp.route("/", methods=["POST"])
-def create_a_booking():
+def create_booking():
     try:
         # GET info from the request body
         body_data = request.get_json()
@@ -139,7 +139,7 @@ def update_booking(booking_id):
 
 # DELETE /id
 @booking_bp.route("/<int:booking_id>", methods=["DELETE"])
-def delete_a_booking(booking_id):
+def delete_booking(booking_id):
         # Find the booking with the booking_id
     stmt = db.select(Booking).where(Booking.id == booking_id)
     booking = db.session.scalar(stmt)

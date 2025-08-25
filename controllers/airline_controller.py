@@ -30,7 +30,7 @@ def get_airlines():
     
 # GET /id
 @airline_bp.route("/<int:airline_id>")
-def get_a_airline(airline_id):
+def get_an_airline(airline_id):
     # Define GET statment
     stmt = db.select(Airline).where(Airline.id == airline_id)
 
@@ -48,7 +48,7 @@ def get_a_airline(airline_id):
     
 # POST /
 @airline_bp.route("/", methods=["POST"])
-def create_a_airline():
+def create_airline():
     try:
         # GET info from the request body
         body_data = request.get_json()
@@ -132,7 +132,7 @@ def update_airline(airline_id):
 
 # DELETE /id
 @airline_bp.route("/<int:airline_id>", methods=["DELETE"])
-def delete_a_airline(airline_id):
+def delete_airline(airline_id):
         # Find the airline with the airline_id
     stmt = db.select(Airline).where(Airline.id == airline_id)
     airline = db.session.scalar(stmt)

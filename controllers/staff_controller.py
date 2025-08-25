@@ -15,7 +15,7 @@ staff_bp = Blueprint("staff", __name__, url_prefix="/staffs")
 # Routes
 # GET
 @staff_bp.route("/")
-def get_staffs():
+def get_staff():
     # Define GET statement
     stmt = db.select(Staff)
     # Execute it
@@ -30,7 +30,7 @@ def get_staffs():
     
 # GET /id
 @staff_bp.route("/<int:staff_id>")
-def get_a_staff(staff_id):
+def get_a_staff_member(staff_id):
     # Define GET statment
     stmt = db.select(Staff).where(Staff.id == staff_id)
 
@@ -48,7 +48,7 @@ def get_a_staff(staff_id):
     
 # POST /
 @staff_bp.route("/", methods=["POST"])
-def create_a_staff():
+def create_staff():
     try:
         # GET info from the request body
         body_data = request.get_json()
@@ -148,7 +148,7 @@ def update_staff(staff_id):
 
 # DELETE /id
 @staff_bp.route("/<int:staff_id>", methods=["DELETE"])
-def delete_a_staff(staff_id):
+def delete_staff(staff_id):
         # Find the staff with the staff_id
     stmt = db.select(Staff).where(Staff.id == staff_id)
     staff = db.session.scalar(stmt)

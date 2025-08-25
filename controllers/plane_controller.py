@@ -48,7 +48,7 @@ def get_a_plane(plane_id):
     
 # POST /
 @plane_bp.route("/", methods=["POST"])
-def create_a_plane():
+def create_plane():
     try:
         # GET info from the request body
         body_data = request.get_json()
@@ -134,7 +134,7 @@ def update_plane(plane_id):
 
 # DELETE /id
 @plane_bp.route("/<int:plane_id>", methods=["DELETE"])
-def delete_a_plane(plane_id):
+def delete_plane(plane_id):
         # Find the plane with the plane_id
     stmt = db.select(Plane).where(Plane.id == plane_id)
     plane = db.session.scalar(stmt)

@@ -30,7 +30,7 @@ def get_airports():
     
 # GET /id
 @airport_bp.route("/<int:airport_id>")
-def get_a_airport(airport_id):
+def get_an_airport(airport_id):
     # Define GET statment
     stmt = db.select(Airport).where(Airport.id == airport_id)
 
@@ -48,7 +48,7 @@ def get_a_airport(airport_id):
     
 # POST /
 @airport_bp.route("/", methods=["POST"])
-def create_a_airport():
+def create_airport():
     try:
         # GET info from the request body
         body_data = request.get_json()
@@ -136,7 +136,7 @@ def update_airport(airport_id):
 
 # DELETE /id
 @airport_bp.route("/<int:airport_id>", methods=["DELETE"])
-def delete_a_airport(airport_id):
+def delete_airport(airport_id):
         # Find the airport with the airport_id
     stmt = db.select(Airport).where(Airport.id == airport_id)
     airport = db.session.scalar(stmt)

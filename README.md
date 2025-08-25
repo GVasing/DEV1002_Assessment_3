@@ -30,6 +30,18 @@ With the revised Relational Data Model to go off, the second lot of feedback rec
 
 Although each flight number is techincally unique, which would not violate 3NF, they do still contain an identifier in them at the start of the sequence in the form of letters, for example 'AA292' would be an American Airlines flight, due to the 'AA', and 'QF123' would be a Qantas flight, due to the 'QF'.  To avoid any possibility of causing any normalisation issues, the feedback was taken on board, and the issues addressed by creating another table labeled 'Airline'.  Much like the inclusion of further attributes for the 'Flight' table, the same was done here, with some of the new attributes including: fleet size, number of destinations, etc.
 
+### Feedback Received
+
+__Feedback Lot 3:__  
+
+- Most of the error handling within the code is personal to each controller, yet there is a global error handling module.  While the intention of having this incase some errors slip through the controller error handling, all the errors raised between both are the same, meaning that 'error_handlers.py' is essentially dead code.
+- Add endpoints to your documentation.
+
+### Response & Implementation
+
+- Also, since a lot of the controller error handling has generic error responses, try personalising the messages more, otherwise it defeats the purpose of a global error handler.
+- Endpoints added to documentation.
+
 ### Changes Made
 
 __Prior to feedback:__  

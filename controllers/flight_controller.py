@@ -48,7 +48,7 @@ def get_a_flight(flight_id):
     
 # POST /
 @flight_bp.route("/", methods=["POST"])
-def create_a_flight():
+def create_flight():
     try:
         # GET info from the request body
         body_data = request.get_json()
@@ -141,7 +141,7 @@ def update_flight(flight_id):
 
 # DELETE /id
 @flight_bp.route("/<int:flight_id>", methods=["DELETE"])
-def delete_a_flight(flight_id):
+def delete_flight(flight_id):
         # Find the flight with the flight_id
     stmt = db.select(Flight).where(Flight.id == flight_id)
     flight = db.session.scalar(stmt)
