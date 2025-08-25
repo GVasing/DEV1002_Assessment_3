@@ -3,7 +3,7 @@ from init import db
 
 # Explain the purpose of this class
 class Staff(db.Model):
-    __tablename__ = "staff"
+    __tablename__ = "staffs"
 
     # Attributes of 'Staff' entity
 
@@ -23,4 +23,4 @@ class Staff(db.Model):
     airport_id = db.Column(db.Integer, db.ForeignKey("airports.id"), nullable=False)
 
     # Define Relationship
-    airport = db.relationship("Airport", back_populates="staff")
+    airport = db.relationship("Airport", back_populates="staffs")

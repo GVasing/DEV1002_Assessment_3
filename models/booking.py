@@ -19,9 +19,9 @@ class Booking(db.Model):
     ticket_price = db.Column(db.Float)
 
     # Foreign Key attributes
-    airport_id = db.Column(db.Integer, db.ForeignKey("airports.id", ondelete="CASCADE"), nullable=False)
-    flight_id = db.Column(db.Integer, db.ForeignKey("flights.id", ondelete="CASCADE"), nullable=False)
-    passenger_id = db.Column(db.Integer, db.ForeignKey("passengers.id", ondelete="CASCADE"), nullable=False)
+    airport_id = db.Column(db.Integer, db.ForeignKey("airports.id"), nullable=False)
+    flight_id = db.Column(db.Integer, db.ForeignKey("flights.id"), nullable=False)
+    passenger_id = db.Column(db.Integer, db.ForeignKey("passengers.id"), nullable=False)
 
     # Define relationships
     airport = db.relationship("Airport", back_populates="bookings")

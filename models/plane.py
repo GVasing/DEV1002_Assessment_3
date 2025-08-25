@@ -18,4 +18,4 @@ class Plane(db.Model):
     fuel_capacity = db.Column(db.Integer, nullable=False)
 
     # Define Relationship
-    passengers = db.relationship("Passenger", back_populates="plane", cascade = "all, delete")
+    passengers = db.relationship("Passenger", back_populates="plane", cascade='all, delete')

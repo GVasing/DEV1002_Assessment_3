@@ -31,6 +31,7 @@ With the revised Relational Data Model to go off, the second lot of feedback rec
 Although each flight number is techincally unique, which would not violate 3NF, they do still contain an identifier in them at the start of the sequence in the form of letters, for example 'AA292' would be an American Airlines flight, due to the 'AA', and 'QF123' would be a Qantas flight, due to the 'QF'.  To avoid any possibility of causing any normalisation issues, the feedback was taken on board, and the issues addressed by creating another table labeled 'Airline'.  Much like the inclusion of further attributes for the 'Flight' table, the same was done here, with some of the new attributes including: fleet size, number of destinations, etc.
 
 ### Changes Made
+
 __Prior to feedback:__  
 
 [Initial Normalised Relational Data Model](Diagrams/Initial%20Relational%20Data%20Model.jpg)  
@@ -40,8 +41,6 @@ __After feedback:__
 [Final Normalised Relational Data Model](Diagrams/Normalised%20Relational%20Data%20Model.jpg)
 
 ## Features
-
-## Installation
 
 ## Acknowledgements
 

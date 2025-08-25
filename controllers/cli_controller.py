@@ -40,6 +40,22 @@ def seed_tables():
         Location(
             city_name="Sydney",
             country_name="Australia"
+        ),
+        Location(
+            city_name="La Paz",
+            country_name="Bolivia"
+        ),
+        Location(
+            city_name="La Paz",
+            country_name="Mexico"
+        ),
+        Location(
+            city_name="New York City",
+            country_name="United States of America"
+        ),
+        Location(
+            city_name="Vancouver",
+            country_name="Canada"
         )
     ]
     # Add to session
@@ -58,6 +74,12 @@ def seed_tables():
             origin="Singapore",
             fleet_size=157,
             number_of_destinations=79
+        ),
+        Airline(
+            airline_name="Emirates",
+            origin="United Arab Emirates (UAE)",
+            fleet_size=270,
+            number_of_destinations=133
         )
     ]
 
@@ -79,6 +101,12 @@ def seed_tables():
             range= 11300,
             passenger_capacity= 290,
             fuel_capacity= 139090
+        ),
+        Plane(
+            manufacturer="Airbus",
+            model="A380-800",
+            passenger_capacity= 525,
+            fuel_capacity= 320000
         )
     ]
 
@@ -99,6 +127,18 @@ def seed_tables():
         Passenger(
             name="Jane Doe",
             age= 46,
+            gender="Female",
+            plane_id=planes[1].id
+        ),
+        Passenger(
+            name="Tom Chance",
+            age= 32,
+            gender="Male",
+            plane_id=planes[0].id
+        ),
+        Passenger(
+            name="Jess Smith",
+            age= 54,
             gender="Female",
             plane_id=planes[1].id
         )
@@ -128,6 +168,16 @@ def seed_tables():
             departure_date= date(2025, 8, 20),
             flight_duration= 93,
             airline_id=airlines[0].id
+        ),
+        Flight(
+            departure_point="Sydney",
+            destination="Perth",
+            flight_code="QF641",
+            departure_time= time(6, 52),
+            arrival_time= time(10, 8),
+            departure_date= date(2025, 8, 21),
+            flight_duration= 316,
+            airline_id=airlines[0].id
         )
     ]
 
@@ -152,6 +202,14 @@ def seed_tables():
             domestic_terminal_amount= 2,
             number_of_runways= 3,
             location_id=locations[1].id
+        ),
+        Airport(
+            name="Vancouver International Airport",
+            total_terminal_amount= 3,
+            international_terminal_amount= 1,
+            domestic_terminal_amount= 2,
+            number_of_runways= 3,
+            location_id=locations[5].id
         )
     ]
 
@@ -162,7 +220,7 @@ def seed_tables():
     db.session.commit()
 
     # Create an instance(s) of Staff
-    staff = [
+    staffs = [
         Staff(
             name="Jeanie Coleman",
             age= 31,
@@ -182,11 +240,31 @@ def seed_tables():
             salary= 38000,
             years_worked= 3,
             airport_id=airports[1].id
+        ),
+        Staff(
+            name="Stan Rodriguez",
+            age= 47,
+            gender= "Male",
+            employment= "Full-Time",
+            position= "Security",
+            salary= 60000,
+            years_worked= 12,
+            airport_id=airports[0].id
+        ),
+        Staff(
+            name="Jess Bauer",
+            age= 32,
+            gender= "Male",
+            employment= "Part-Time",
+            position= "Cabin Crew",
+            salary= 50000,
+            years_worked= 4,
+            airport_id=airports[1].id
         )
     ]
 
     # Add to session
-    db.session.add_all(staff)
+    db.session.add_all(staffs)
 
     # Commit here to generate multiple forgein keys for junction table (Booking)
     db.session.commit()
@@ -214,6 +292,17 @@ def seed_tables():
             airport_id=airports[1].id,
             flight_id=flights[1].id,
             passenger_id=passengers[1].id,
+        ),
+        Booking(
+            cabin_class="Business Class",
+            checked_baggage= False,
+            baggage_amount= 0,
+            seat_selected= False,
+            meal_ordered="Beef Pasta Ragu",
+            ticket_price= 1113.75,
+            airport_id=airports[0].id,
+            flight_id=flights[0].id,
+            passenger_id=passengers[3].id,
         )
     ]
 

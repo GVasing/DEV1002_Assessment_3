@@ -38,9 +38,9 @@ class AirlineSchema(SQLAlchemyAutoSchema):
             raise ValueError
         
     @validates("number_of_destinations")
-    def validates_fleet_size(self, number_of_destinations, data_key):
+    def validates_number_of_destinations(self, number_of_destinations, data_key):
         if number_of_destinations <= 0:
-            raise ValueError
+            raise ValidationError
 
 class AirportSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -60,7 +60,7 @@ class AirportSchema(SQLAlchemyAutoSchema):
         
     @validates("total_terminal_amount")
     def validates_total_terminal_amount(self, total_terminal_amount, data_key):
-        if not total_terminal_amount:
+        if total_terminal_amount == None:
             raise ValidationError ("Enter a valid integer")
         if total_terminal_amount < 0:
             raise ValueError("Value must not be negative")
@@ -190,11 +190,11 @@ class StaffSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Staff
         load_instance = True
+        include_fk = True
         include_relationships = True
         ordered = True
         fields = ("id", "name", "age", "gender", "employment", "position", "salary", "years_worked", "airport_id", "airport")
 
-    airport_id = fields.Integer(dump_only=True)
     airport = fields.Nested("AirportSchema", only=("name",))
 
     @validates("name")
@@ -203,6 +203,8 @@ class StaffSchema(SQLAlchemyAutoSchema):
             raise ValidationError("Name non null value must not be empty") 
         
     employment = auto_field(validate=OneOf(["Full-Time", "Part-Time", "Casual", "Contract"], error="Employment options must be one of the following:'Full-Time', 'Part-Time', 'Casual', 'Contract'"))
+
+    gender = auto_field(validate=OneOf(["Male", "Female", "Non-Binary"], error="Please select from: 'Male', 'Female', 'Non-Binary'"))
 
 # Airline Schema for converting a single entry
 airline_schema = AirlineSchema()

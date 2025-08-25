@@ -52,6 +52,7 @@ def create_a_plane():
     try:
         # GET info from the request body
         body_data = request.get_json()
+        
         # Create a Plane Object from Plane class/model with body response data
         # new_plane = Plane(
         #     manufacturer=body_data.get("manufacturer"),

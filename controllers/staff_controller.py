@@ -10,12 +10,12 @@ from models.staff import Staff
 from schemas.schemas import staff_schema, staffs_schema
 
 # Define Blueprint for staff
-staff_bp = Blueprint("staff", __name__, url_prefix="/staff")
+staff_bp = Blueprint("staff", __name__, url_prefix="/staffs")
 
 # Routes
 # GET
 @staff_bp.route("/")
-def get_staff():
+def get_staffs():
     # Define GET statement
     stmt = db.select(Staff)
     # Execute it
@@ -53,27 +53,27 @@ def create_a_staff():
         # GET info from the request body
         body_data = request.get_json()
 
-        errors = staff_schema.validate(body_data, session=db.session)
+        # errors = staff_schema.validate(body_data, session=db.session)
 
-        if errors:
-            return {"message": "Validation failed", "errors": errors}, 400
+        # if errors:
+        #     return {"message": "Validation failed", "errors": errors}, 400
         
-        # # Create a Staff Object from Staff class/model with body response data
-        new_staff = Staff(
-            name=body_data.get("name"),
-            age=body_data.get("age"),
-            gender=body_data.get("gender"),
-            employment=body_data.get("employment"),
-            position=body_data.get("position"),
-            salary=body_data.get("salary"),
-            years_worked=body_data.get("years_worked"),
-            airport_id=body_data.get("airport_id")
-        )
-
-        # new_staff = staff_schema.load(
-        # body_data,
-        # session=db.session
+        # # # Create a Staff Object from Staff class/model with body response data
+        # new_staff = Staff(
+        #     name=body_data.get("name"),
+        #     age=body_data.get("age"),
+        #     gender=body_data.get("gender"),
+        #     employment=body_data.get("employment"),
+        #     position=body_data.get("position"),
+        #     salary=body_data.get("salary"),
+        #     years_worked=body_data.get("years_worked"),
+        #     airport_id=body_data.get("airport_id")
         # )
+
+        new_staff = staff_schema.load(
+            body_data,
+            session=db.session
+        )
 
         # Add new staff data to session
         db.session.add(new_staff)
@@ -83,8 +83,8 @@ def create_a_staff():
         return jsonify(staff_schema.dump(new_staff)), 201
     except ValidationError as err:
         return err.messages, 400
-    # except ValueError as err:
-    #     return {"message": "Invalid format given or no data provided."}, 400
+    except ValueError as err:
+        return {"message": "Invalid format given or no data provided."}, 400
     except IntegrityError as err:
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {"message":f"Required field {err.orig.diag.column_name} cannot be null"}, 400
@@ -101,26 +101,38 @@ def update_staff(staff_id):
         # Execute statement
         staff = db.session.scalar(stmt)
 
-        # If/Elif/Else Conditions
-        if staff:
-            # Retrieve 'staff' data
-            body_data = request.get_json()
-            # Specify changes
-            staff.name = body_data.get("name") or staff.name
-            staff.age = body_data.get("age") or staff.age
-            staff.gender = body_data.get("gender") or staff.gender
-            staff.employment = body_data.get("employment") or staff.employment
-            staff.position = body_data.get("position") or staff.position
-            staff.salary = body_data.get("salary") or staff.salary
-            staff.years_worked = body_data.get("years_worked") or staff.years_worked
-            staff.airport_id = body_data.get("airport_id") or staff.airport_id
-        else:
+        if not staff:
             return {"message": f"Staff with id {staff_id} does not exist/cannot be found."}, 404
+
+        # # If/Elif/Else Conditions
+        # if staff:
+        #     # Retrieve 'staff' data
+        #     body_data = request.get_json()
+        #     # Specify changes
+        #     staff.name = body_data.get("name") or staff.name
+        #     staff.age = body_data.get("age") or staff.age
+        #     staff.gender = body_data.get("gender") or staff.gender
+        #     staff.employment = body_data.get("employment") or staff.employment
+        #     staff.position = body_data.get("position") or staff.position
+        #     staff.salary = body_data.get("salary") or staff.salary
+        #     staff.years_worked = body_data.get("years_worked") or staff.years_worked
+        #     staff.airport_id = body_data.get("airport_id") or staff.airport_id
+        # else:
+        #     return {"message": f"Staff with id {staff_id} does not exist/cannot be found."}, 404
+
+        body_data = request.get_json()
+
+        updated_staff = staff_schema.load(
+            body_data,
+            instance=staff,
+            partial=True,
+            session=db.session
+        )
 
         # Commit changes
         db.session.commit()
         # Return data
-        return jsonify(staff_schema.dump(staff))
+        return jsonify(staff_schema.dump(updated_staff))
     # except ValidationError as err:
     #     return err.messages, 400
     except ValueError as err:

@@ -20,8 +20,8 @@ class Flight(db.Model):
     flight_duration = db.Column(db.Float, nullable=False)
 
     # Foreign Key attribute
-    airline_id = db.Column(db.Integer, db.ForeignKey("airlines.id", ondelete="CASCADE"), nullable=False)
+    airline_id = db.Column(db.Integer, db.ForeignKey("airlines.id"), nullable=False)
 
     # Define relationship
     airline = db.relationship("Airline", back_populates="flights")
-    bookings = db.relationship("Booking", back_populates="flight")
+    bookings = db.relationship("Booking", back_populates="flight", cascade='all, delete')
