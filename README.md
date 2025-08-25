@@ -64,7 +64,31 @@ Screenshots of revised error messages to be more personalised can be found [here
 
 ## Features
 
+Here are some features and the CRUD operations users can perform to explore them:
 
+__Create:__
+- Users can register new passengers and add their booking record to a database
+- Users can add new airports and register new terminals/runways
+- Users can register new airlines and add route destinations
+- Users can register new staff and assign them to various airports
+
+__Read:__
+- Users can retrieve passenger profile data, such as: travel history, demographics, class preference, etc.
+- Users can retrieve airline profile data, such as: fleet data, route networks, etc.
+- Users can retrieve basic aircraft specifications (i.e. ownership, capabilities, etc.)
+- Users can retrieve staff data, such as: employment history, salary information, etc.
+
+__Update:__
+- Users can modify passenger details
+- Users can update airport specs, such as: terminal count, number of runways, etc.
+- Users can update airline details, such as: the number of destinations, fleet size, name in case of a merger, etc.
+- Users can update employee details in the event of a promotion, change in employment or rate/salary, etc.
+
+__Delete:__
+- Users can remove passenger records 
+- Users can remove dissolved airlines and discontinued flight routes
+- Users can remove aircrafts in the event of obsoletion 
+- Users can remove employees from staff database in the event of redundancy, resignation, etc.
 
 ## Endpoints
 
